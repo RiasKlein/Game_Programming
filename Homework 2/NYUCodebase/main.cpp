@@ -35,37 +35,20 @@ Entity winLogo;		// logo to display when someone wins
 
 const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
-/*	Use SDL to load in textures. The function returns GLuint textureID.
-*/
-GLuint LoadTexture(const char *image_path) {
-	SDL_Surface *surface = IMG_Load(image_path);
-	GLuint textureID;
-	glGenTextures(1, &textureID);
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	SDL_FreeSurface(surface);
-	
-	return textureID;
-}
+//--- Function prototypes
+int ballCollisionCheck();
+void Cleanup();
+void initEntityValues();
+void Input(float elapsed);
+GLuint LoadTexture(const char *image_path);
+int paddleCollisionCheck(Entity paddle);
+bool ProcessEvents();
+void Render(bool winCheck);
+void Setup();
+void Update(float elapsed, float accelConstant, float failSafe, float failSafeThreshold);
+bool winCheck();
 
-/*	Test for a collision between the parameter paddle and a wall (top & bottom)
-	Returns an int: 1 for collision with topWall, 2 for collision with botWall, 0 by default
-	*This function will ensure that the players' paddles do not cross the boundary of the playing field*
-*/
-int paddleCollisionCheck(Entity paddle) {
-
-	// Check for a collision with the top wall
-	if ((paddle.y + ((paddle.height * paddle.scale)/2)) > topWall.y) {
-		return 1;
-	}
-	// Check for a collision with the bottom wall
-	else if ((paddle.y - ((paddle.height * paddle.scale) / 2)) < botWall.y) {
-		return 2;
-	}
-	return 0;
-}
+//--- Functions
 
 /*	Test for a collision between the ball and paddles or walls
 	Returns an int: 1 for a collision with paddle1, 2 for a collision with paddle2, 3 for a collision with a wall, 0 by default
@@ -105,59 +88,16 @@ int ballCollisionCheck() {
 	return 0;
 }
 
-/*	This function will complete the basic setup for the game. It should be run before the game loop.
-	Setup SDL & OpenGL, Set projection matrix, Load Textures & Assign to Proper Entity
+/*	Takes care of freeing things or closing things in order to close the game cleanly
+If controller support is added, each joystick needs to be closed in this function
 */
-void Setup(){
-
-	SDL_Init(SDL_INIT_VIDEO);
-	displayWindow = SDL_CreateWindow("Shunman Tse Assignment 2 - PONG", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL);
-	SDL_GLContext context = SDL_GL_CreateContext(displayWindow);
-	SDL_GL_MakeCurrent(displayWindow, context);
-
-	// Basic setup for the rendering pipeline
-	glViewport(0, 0, 800, 600);
-	glMatrixMode(GL_PROJECTION);
-	glOrtho(-1.33, 1.33, -1.0, 1.0, -1.0, 1.0);
-	glMatrixMode(GL_MODELVIEW);
-
-	//--- Load Textures
-	GLuint ballImg = LoadTexture("enemyUFO.png");
-	GLuint paddle1Img = LoadTexture("laserBlue02.png");
-	GLuint paddle2Img = LoadTexture("laserRed02.png");
-	GLuint wallImg = LoadTexture("laserGreen03.png");
-	GLuint winLogoImg = LoadTexture("winner.png");
-
-	// Setting Entity textureIDs
-	ball.textureID = ballImg;
-	paddle1.textureID = paddle1Img;
-	paddle2.textureID = paddle2Img;
-	topWall.textureID = wallImg;
-	botWall.textureID = wallImg;
-	winLogo.textureID = winLogoImg;
-}
-
-/*	This function determines whether the game loop should continue.
-	Returns a bool: true if the game should go on, false if the game should end
-*/
-bool ProcessEvents(){
-	
-	SDL_Event event;
-
-	while (SDL_PollEvent(&event)) {
-		// Check whether the close button for the game has been pressed -- if so, end the game
-		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
-			return false;
-		}
-		return true;
-	}
-
-	return true;
+void CleanUp(){
+	SDL_Quit();
 }
 
 /*	This function sets the initial values for the Entities of this game:
-	Ball, Paddles, Walls, Win Logo.
-	Some settings can be changed for game balancing.
+Ball, Paddles, Walls, Win Logo.
+Some settings can be changed for game balancing.
 */
 void initEntityValues(){
 
@@ -205,37 +145,9 @@ void initEntityValues(){
 	botWall.y = -0.9f;
 }
 
-/*	This function will generate the sprites of the ball, paddles, and walls. 
-	It requires the output of the function: winCheck()
-	Depending on whether a winner has been decided, the game either continues OR the winner logo is displayed.
-*/
-void Render(bool winCheck){
-	
-	// Clear screen
-	glClearColor(0.5f, 0.4f, 0.7f, 1.0f); // Purple Screen
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	// If a winner has been decided, then display the win logo and stop displaying game elements
-	if (winCheck) {
-		winLogo.Draw();
-	}
-
-	// If a winner hasn't been decided yet, continue the game normally 
-	else {
-		ball.Draw();
-		paddle1.Draw();
-		paddle2.Draw();
-		topWall.Draw();
-		botWall.Draw();
-	}
-
-	// Display elements on the screen
-	SDL_GL_SwapWindow(displayWindow);
-}
-
 /*	Handles player input to change the location of the paddles.
-	Default Settings:	Paddle1 (left):		W for up, S for down
-						Paddle2 (right):	UP for up, DOWN for down
+Default Settings:	Paddle1 (left):		W for up, S for down
+Paddle2 (right):	UP for up, DOWN for down
 */
 void Input(float elapsed) {
 	// Read for Input On Left Player (W & S)
@@ -263,41 +175,132 @@ void Input(float elapsed) {
 	}
 }
 
-/*	Check if there is a winner
-	Returns a bool: true if there is a winner, false if a winner hasn't been decided yet
+/*	Use SDL to load in textures. The function returns GLuint textureID.
 */
-bool winCheck(){
-	// If the ball has passed beyond the limits of the screen, a winner has been decided
-	// While the current function doesn't record who the winner is, it can be easily modified to do so
-	if ((ball.x > (1.40)) || (ball.x < (-1.40))) {
+GLuint LoadTexture(const char *image_path) {
+	SDL_Surface *surface = IMG_Load(image_path);
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	SDL_FreeSurface(surface);
+
+	return textureID;
+}
+
+/*	Test for a collision between the parameter paddle and a wall (top & bottom)
+	Returns an int: 1 for collision with topWall, 2 for collision with botWall, 0 by default
+	*This function will ensure that the players' paddles do not cross the boundary of the playing field*
+*/
+int paddleCollisionCheck(Entity paddle) {
+
+	// Check for a collision with the top wall
+	if ((paddle.y + ((paddle.height * paddle.scale) / 2)) > topWall.y) {
+		return 1;
+	}
+	// Check for a collision with the bottom wall
+	else if ((paddle.y - ((paddle.height * paddle.scale) / 2)) < botWall.y) {
+		return 2;
+	}
+	return 0;
+}
+
+/*	This function determines whether the game loop should continue.
+Returns a bool: true if the game should go on, false if the game should end
+*/
+bool ProcessEvents(){
+
+	SDL_Event event;
+
+	while (SDL_PollEvent(&event)) {
+		// Check whether the close button for the game has been pressed -- if so, end the game
+		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
+			return false;
+		}
 		return true;
 	}
-	return false;
+
+	return true;
+}
+
+/*	This function will generate the sprites of the ball, paddles, and walls.
+It requires the output of the function: winCheck()
+Depending on whether a winner has been decided, the game either continues OR the winner logo is displayed.
+*/
+void Render(bool winCheck){
+
+	// Clear screen
+	glClearColor(0.5f, 0.4f, 0.7f, 1.0f); // Purple Screen
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	// If a winner has been decided, then display the win logo and stop displaying game elements
+	if (winCheck) {
+		winLogo.Draw();
+	}
+
+	// If a winner hasn't been decided yet, continue the game normally 
+	else {
+		ball.Draw();
+		paddle1.Draw();
+		paddle2.Draw();
+		topWall.Draw();
+		botWall.Draw();
+	}
+
+	// Display elements on the screen
+	SDL_GL_SwapWindow(displayWindow);
+}
+
+/*	This function will complete the basic setup for the game. It should be run before the game loop.
+	Setup SDL & OpenGL, Set projection matrix, Load Textures & Assign to Proper Entity
+*/
+void Setup(){
+
+	SDL_Init(SDL_INIT_VIDEO);
+	displayWindow = SDL_CreateWindow("Shunman Tse Assignment 2 - PONG", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL);
+	SDL_GLContext context = SDL_GL_CreateContext(displayWindow);
+	SDL_GL_MakeCurrent(displayWindow, context);
+
+	// Basic setup for the rendering pipeline
+	glViewport(0, 0, 800, 600);
+	glMatrixMode(GL_PROJECTION);
+	glOrtho(-1.33, 1.33, -1.0, 1.0, -1.0, 1.0);
+	glMatrixMode(GL_MODELVIEW);
+
+	//--- Load Textures
+	GLuint ballImg = LoadTexture("enemyUFO.png");
+	GLuint paddle1Img = LoadTexture("laserBlue02.png");
+	GLuint paddle2Img = LoadTexture("laserRed02.png");
+	GLuint wallImg = LoadTexture("laserGreen03.png");
+	GLuint winLogoImg = LoadTexture("winner.png");
+
+	// Setting Entity textureIDs
+	ball.textureID = ballImg;
+	paddle1.textureID = paddle1Img;
+	paddle2.textureID = paddle2Img;
+	topWall.textureID = wallImg;
+	botWall.textureID = wallImg;
+	winLogo.textureID = winLogoImg;
 }
 
 /*	Process the ball's velocity and move the ball accordingly.
-	Ball's acceleration and failSafe settings can be changed.
-	Acceleration: How much the velocity of the ball increases with each "bounce" or collision with another entity
-	failSafe: A constant float that will be used to slow the ball down should it get too fast due to acceleration
 */
-void Update(float elapsed){
-
-	// Modifiable Acceleration Constant (For game balancing)
-	float accelConstant = 0.1f;
-	float failSafe = 0.75f;
+void Update(float elapsed, float accelConstant, float failSafeConstant, float failSafeThreshold){
 
 	// Process the ball movement and changes to the ball velocity
 	// Ball colliding with paddle1
-	if (ballCollisionCheck() == 1) { 
-		
+	if (ballCollisionCheck() == 1) {
+
 		ball.velocity_x *= -1.0f;					// Reverse the x velocity so that the ball starts going in the opposite direction
 		ball.x += ball.velocity_x / 150.0f;			// Add in an offset so that the ball is not immediately touching the paddle again
 
 		// Process the change to ball's x velocity
-		if (fabs(ball.velocity_x) > 3.0) {
-			// This is a fail safe mechanism to ensure that the ball doesn't get so fast that the game breaks
+		if (fabs(ball.velocity_x) > failSafeThreshold) {
+			// This is a fail safe mechanism to ensure that the ball doesn't get so fast that the game breaks (faster than the threshold is too fast)
 			// If the ball gets too fast the ball's speed is reduced based on a float that should be between 0.0f ~ 1.0f
-			ball.velocity_x *= failSafe;
+			ball.velocity_x *= failSafeConstant;
 		}
 		// We increase the x velocity of the ball if it's not going too fast 
 		else if (ball.velocity_x > 0) {
@@ -308,13 +311,13 @@ void Update(float elapsed){
 		}
 
 		// Process the change to ball's y velocity
-		if (fabs(ball.velocity_y) > 3.0) {
+		if (fabs(ball.velocity_y) > failSafeThreshold) {
 			// This is a fail safe mechanism to ensure that the ball doesn't go too fast
 			// The ball's y velocity is reduced according to the float failSafe 
-			ball.velocity_y *= failSafe;
+			ball.velocity_y *= failSafeConstant;
 		}
 		// Depending on the location of the paddle that the ball hits, the y velocity is changed
-		else if (ball.y >= paddle1.y) { 
+		else if (ball.y >= paddle1.y) {
 			ball.velocity_y += accelConstant;
 		}
 		else {
@@ -322,16 +325,16 @@ void Update(float elapsed){
 		}
 	}
 	// Ball colliding with paddle2 (most of the comments here are the same as for ballCollisionCheck() == 1 above)
-	else if (ballCollisionCheck() == 2) { 
-		
+	else if (ballCollisionCheck() == 2) {
+
 		ball.velocity_x *= -1.0f;					// Reverse the x velocity so that the ball starts going in the opposite direction
 		ball.x += ball.velocity_x / 150.0f;			// Add in an offset so that the ball is not immediately touching the paddle again
 
 		// Process the change to ball's x velocity
-		if (fabs(ball.velocity_x) > 3.0) {
+		if (fabs(ball.velocity_x) > failSafeThreshold) {
 			// This is a fail safe mechanism to ensure that the ball doesn't get so fast that the game breaks
 			// If the ball gets too fast the ball's speed is reduced based on a float that should be between 0.0f ~ 1.0f
-			ball.velocity_x *= failSafe;
+			ball.velocity_x *= failSafeConstant;
 		}
 		// We increase the x velocity of the ball if it's not going too fast 
 		else if (ball.velocity_x > 0) {
@@ -342,13 +345,13 @@ void Update(float elapsed){
 		}
 
 		// Process the change to ball's y velocity
-		if (fabs(ball.velocity_y) > 3.0) {
+		if (fabs(ball.velocity_y) > failSafeThreshold) {
 			// This is a fail safe mechanism to ensure that the ball doesn't go too fast
 			// The ball's y velocity is reduced according to the float failSafe 
-			ball.velocity_y *= failSafe;
+			ball.velocity_y *= failSafeConstant;
 		}
 		// Depending on the location of the paddle that the ball hits, the y velocity is changed
-		else if (ball.y >= paddle1.y) { 
+		else if (ball.y >= paddle1.y) {
 			ball.velocity_y += accelConstant;
 		}
 		else {
@@ -356,7 +359,7 @@ void Update(float elapsed){
 		}
 	}
 	// Ball collided with wall
-	else if (ballCollisionCheck() == 3) { 
+	else if (ballCollisionCheck() == 3) {
 		ball.velocity_y *= -1.0f;					// Reverse the y velocity of the ball so that it will head in the opposite direction
 		ball.y += ball.velocity_y / 90.0f;			// Add in an offset so the ball is not immediately touching the wall again
 
@@ -374,35 +377,49 @@ void Update(float elapsed){
 	ball.y += ball.velocity_y * elapsed;
 }
 
-/*	Takes care of freeing things or closing things in order to close the game cleanly
-	If controller support is added, each joystick needs to be closed in this function
+/*	Check if there is a winner
+	Returns a bool: true if there is a winner, false if a winner hasn't been decided yet
 */
-void CleanUp(){
-	SDL_Quit();
+bool winCheck(){
+	// If the ball has passed beyond the limits of the screen, a winner has been decided
+	// While the current function doesn't record who the winner is, it can be easily modified to do so
+	if ((ball.x > (1.40)) || (ball.x < (-1.40))) {
+		return true;
+	}
+	return false;
 }
 
 /*	Sets up and runs the game of PONG
 */
 int main(int argc, char *argv[]) {
-	// Set up SDL / OpenGL / Projection Matrix / Textures before running the game loop
+	//--- Set up SDL / OpenGL / Projection Matrix / Textures before running the game loop
 	Setup();	
 
-	// Set up the initial values of the game's entities
+	//--- Set up the initial values of the game's entities
 	initEntityValues();
 
-	// Time management variables
+	//--- Time Management Variables
 	float elapsed;
 	float lastFrameTicks = 0.0f;
 
+	//--- Ball Movement Variables: Modify for Game Balance
+	float accelConstant		= 0.1f;			// Accleration constant for the ball	
+	// Ball Movement: Fail Safe (for more info. please look at Update function)
+	// If the ball has a velocity with a magnitude greater than failSafeThreshold, it is reduced according to failSafeConstant.
+	// failSafeConstant should be a float between 0 and 1. 
+	// This system is in place so the ball does not get to a velocity that is too fast. 
+	float failSafeThreshold = 3.0f;		
+	float failSafeConstant	= 0.75f;			
+	
 	// Game loop
 	while (ProcessEvents()) {
 		// Process time
-		float ticks = (float)SDL_GetTicks() / 1000.0f;
-		elapsed = ticks - lastFrameTicks;
-		lastFrameTicks = ticks;
+		float ticks		= (float)SDL_GetTicks() / 1000.0f;
+		elapsed			= ticks - lastFrameTicks;
+		lastFrameTicks	= ticks;
 
 		// Move the ball
-		Update(elapsed);
+		Update(elapsed, accelConstant, failSafeConstant, failSafeThreshold);
 
 		// Move the players' paddles
 		Input(elapsed);
