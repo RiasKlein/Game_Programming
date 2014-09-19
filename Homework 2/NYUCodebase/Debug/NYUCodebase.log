@@ -1,0 +1,16 @@
+﻿Build started 9/19/2014 1:57:00 AM.
+     1>Project "E:\Users\Eliza\documents\visual studio 2013\Projects\Homework 2\NYUCodebase\NYUCodebase.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\SDL2\include /IC:\SDL2_image\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         main.cpp
+     1>e:\users\eliza\documents\visual studio 2013\projects\homework 2\nyucodebase\main.h(38): warning C4244: 'initializing' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>e:\users\eliza\documents\visual studio 2013\projects\homework 2\nyucodebase\main.cpp(78): warning C4715: 'ballCollisionCheck' : not all control paths return a value
+     1>e:\users\eliza\documents\visual studio 2013\projects\homework 2\nyucodebase\main.cpp(167): warning C4715: 'ProcessEvents' : not all control paths return a value
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\Users\Eliza\documents\visual studio 2013\Projects\Homework 2\Debug\NYUCodebase.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\SDL2\lib\x86 /LIBPATH:C:\SDL2_image\lib\x86 SDL2.lib SDL2main.lib SDL2_image.lib OpenGL32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:\Users\Eliza\documents\visual studio 2013\Projects\Homework 2\Debug\NYUCodebase.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\Users\Eliza\documents\visual studio 2013\Projects\Homework 2\Debug\NYUCodebase.lib" /MACHINE:X86 Debug\main.obj
+         NYUCodebase.vcxproj -> E:\Users\Eliza\documents\visual studio 2013\Projects\Homework 2\Debug\NYUCodebase.exe
+     1>Done Building Project "E:\Users\Eliza\documents\visual studio 2013\Projects\Homework 2\NYUCodebase\NYUCodebase.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.46
