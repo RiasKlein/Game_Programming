@@ -3,6 +3,9 @@
 SheetSprite::SheetSprite() {}
 SheetSprite::SheetSprite(unsigned int textureID, float u, float v, float width, float height) : textureID(textureID), u(u), v(v), width(width), height(height) {}
 
+/*	The Draw function of the SheetSprite class will draw the object on the screen.
+	The drawn object's x location, y location, scale, and rotation are configurable.
+*/
 void SheetSprite::Draw(float x, float y, float scale, float rotation) {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, textureID);

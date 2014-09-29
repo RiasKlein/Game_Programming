@@ -15,6 +15,9 @@ GLuint LoadTexture(const char *image_path) {
 	return textureID;
 }
 
+/*	This function sets up the basics for graphical displays on the screen.
+	It also loads in all the texture files and fills various vectors with proper elements.
+*/
 SpaceInvadersApp::SpaceInvadersApp() {
 	SDL_Init(SDL_INIT_VIDEO);
 	displayWindow = SDL_CreateWindow("Shunman Tse Assignment 3 - Space Invaders", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL);
@@ -56,7 +59,7 @@ SpaceInvadersApp::SpaceInvadersApp() {
 	Entity* mainBase = new Entity(mainBaseSprite, -0.2f, 0.1f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 	scene.push_back(mainBase);
 
-	// Push 2 explosion objects into scene
+	// Push explosion Entities into scene
 	SheetSprite boomSprite = SheetSprite(fg_textures, 632.0f / 1024.0f, 600.0f / 1024.0f, 121.0f / 1024.0f, 118.0f / 1024.0f);
 	for (int i = 0; i <= 5; i++){
 		Entity* boom = new Entity(boomSprite, 0.0f, 0.25f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
@@ -64,20 +67,26 @@ SpaceInvadersApp::SpaceInvadersApp() {
 	}
 
 	Init();
-	done = false;
-	score = 0;
-	state = STATE_MAIN_MENU;
 }
 
+/*	This function is called if the player decides to play the game again after having completed it at least once in a single session.
+	It repopulates the entities vector with the player and enemy ships for a fresh start.
+*/
 void SpaceInvadersApp::ReInit() {
-	laserIndex = 0;
-
 	// Make sure that previous game's elements are cleared
+	laserIndex = 0;
 	for (unsigned int i = 0; i < MAX_LASERS; i++){
 		lasers[i].visible = false;
 	}
+	entities.clear();
 
-	if (entities.size() <= 18){
+	// Repopulate the entities vector with the Player as element 0
+	SheetSprite playerSprite = SheetSprite(fg_textures, 504.0f / 1024.0f, 0.0f / 1024.0f, 452.0f / 1024.0f, 320.0f / 1024.0f);
+	Entity* player = new Entity(playerSprite, 0.0f, -0.78f, 0.4f, 90.0f, 0.1f, 0.0f, 0.0f);
+	entities.push_back(player);
+
+	// Repopulate the rest of the entities vector with enemy ships
+	if (entities.size() <= 19){
 		// Set up the enemies
 		SheetSprite enemySprite = SheetSprite(fg_textures, 632.0f / 1024.0f, 720.0f / 1024.0f, 106.0f / 1024.0f, 181.0f / 1024.0f);
 
@@ -92,6 +101,9 @@ void SpaceInvadersApp::ReInit() {
 	}
 }
 
+/*	This function is run once at the start of the game.
+	It populates the entities vector with the player and enemy ships 
+*/
 void SpaceInvadersApp::Init() {
 	lastFrameTicks = 0.0f;
 	laserIndex = 0;
@@ -119,9 +131,10 @@ SpaceInvadersApp::~SpaceInvadersApp() {
 	SDL_Quit();
 }
 
+/*	This function renders the game objects onto the screen based on the state of the game
+	There are three states to consider: the main menu, the game level, and the game over screen
+*/
 void SpaceInvadersApp::Render() {
-	
-	//glClearColor(0.5f, 0.4f, 0.7f, 1.0f); // Purple Screen
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	switch (state) {
@@ -140,6 +153,7 @@ void SpaceInvadersApp::Render() {
 		glTranslatef(-1.0f, -0.15f, 0.0f);
 		Text(font, "High Score: " + to_string(high_score), 0.2f, -0.095f, 1.0f, 1.0f, 0.0f, 1.0f);
 
+		// Display instructions to start the game
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glTranslatef(-1.0f, -0.5f, 0.0f);
@@ -176,7 +190,7 @@ void SpaceInvadersApp::Render() {
 		// Display Background
 		backgrounds[STATE_GAME_OVER]->Render();
 
-		// Display Foreground
+		// Display a different scene based on whether the player won or lost
 		if (victory) { 
 			// Player WON! -- Display the scene of the player ship returning back to base
 			scene[0]->Render();
@@ -247,9 +261,12 @@ void SpaceInvadersApp::Render() {
 	SDL_GL_SwapWindow(displayWindow);
 }
 
+/*	This function returns a bool and checks for whether there has been a collision between the two provided arguments
+	It will be used in this game to detect collision between the player's laser and the enemy alien ships
+*/
 bool SpaceInvadersApp::CollisionCheck(Entity& entity, Laser& laser) {
-	// Check for collision between the entity and laser
 
+	// Create variables for the top, bottom, left, and right of the argument objects
 	float entity_top = entity.y + (entity.sprite.height / 2.0f);
 	float entity_bot = entity.y - (entity.sprite.height / 2.0f);
 	float entity_right = entity.x + (entity.sprite.width / 2.0f);
@@ -260,6 +277,7 @@ bool SpaceInvadersApp::CollisionCheck(Entity& entity, Laser& laser) {
 	float laser_right = laser.x + (laser.sprite.width / 2.0f);
 	float laser_left = laser.x - (laser.sprite.width / 2.0f);
 
+	// Based on the rules for collision detection we have:
 	if (entity_bot > laser_top) {
 		return false;
 	}
@@ -273,6 +291,7 @@ bool SpaceInvadersApp::CollisionCheck(Entity& entity, Laser& laser) {
 		return false;
 	}
 
+	// A true is returned if there has been a collision
 	return true;
 }
 
@@ -282,13 +301,14 @@ void SpaceInvadersApp::Update_Game(float elapsed){
 	for (unsigned int i = 1; i < entities.size(); i++){
 		
 		// Check if the aliens have won by reaching the bottom of the map
-		if (entities[i]->get_y() < -0.5f){
+		if (entities[i]->get_y() < -0.45f){
 			state = STATE_GAME_OVER;
 		}
 
 		// Change the direction of the aliens if they hit either the left or right map edges & move forward
 		if ((entities[i]->get_x() > 1.25) || (entities[i]->get_x() < -1.25)) {
 			for (unsigned int j = 1; j < entities.size(); j++){
+				// When the aliens hit the side of the map, they need to change direction and move forward
 				entities[j]->velocity_x *= -1.0f;
 				entities[j]->y -= entities[j]->velocity_y;
 			}
@@ -299,9 +319,9 @@ void SpaceInvadersApp::Update_Game(float elapsed){
 		for (unsigned int j = 0; j < MAX_LASERS; j++){
 			if (lasers[j].visible && CollisionCheck(*entities[i], lasers[j])) {
 				// We have a collision!
-				score += pts_per_enemy;
-				lasers[j].visible = false; // So the same laser won't hit another ship
-				delete entities[i];
+				score += pts_per_enemy;					// Add points to the score because the player destroyed an enemy ship
+				lasers[j].visible = false;				// Make the laser invisible because it's not capable of piercing multiple ships
+				delete entities[i];						// Remove the entity from the game
 				entities.erase(entities.begin() + i);
 				break;
 			}
@@ -318,18 +338,24 @@ void SpaceInvadersApp::Update_Game(float elapsed){
 		lasers[i].Update(elapsed);
 	}
 
-	// Check if the player has won
+	// Check if the player has won -- that is when there are no longer any enemies present on the map
 	if (entities.size() <= 1) {
 		victory = true;
 		state = STATE_GAME_OVER;
 	}
 
+	// Update the cooldown on the player's laser attack
 	laser_cd -= elapsed;
 }
 
+/*	This function is for the player's only method of attack in this game
+*/
 void SpaceInvadersApp::shootLaser(){
+	// Set up the textures for the laser attack
 	SheetSprite laserSprite = SheetSprite(fg_textures, 665.0f / 1024.0f, 322.0f / 1024.0f, 71.0f / 1024.0f, 120.0f / 1024.0f);
 	lasers[laserIndex].sprite = laserSprite;
+	
+	// Set up the variables of the laser attack
 	
 	lasers[laserIndex].x = entities[0]->get_x();
 	lasers[laserIndex].y = -0.8f;
@@ -338,15 +364,20 @@ void SpaceInvadersApp::shootLaser(){
 	lasers[laserIndex].speed = 2.0f;
 	lasers[laserIndex].visible = true;
 
+	// Increment the laserIndex counter for the lasers array
 	laserIndex++;
 
+	// We don't want umlimited lasers in the game and therefore there's a cap
 	if (laserIndex > (MAX_LASERS - 1)) {
 		laserIndex = 0;
 	}
 
+	// Here we are setting the cooldown on the player's laser attack (it's in seconds)
 	laser_cd = 0.2f;
 }
 
+/*	Handles the player input
+*/
 void SpaceInvadersApp::Update(float elapsed) {
 	SDL_Event event;
 	
@@ -368,7 +399,7 @@ void SpaceInvadersApp::Update(float elapsed) {
 
 		break;
 	case STATE_GAME_LEVEL:
-		// Process Player Movement -- ONLY player speed matters
+		// Process Player input during the game level state (movement and attacking)
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
 				done = true;
@@ -396,6 +427,7 @@ void SpaceInvadersApp::Update(float elapsed) {
 
 		break;
 	case STATE_GAME_OVER:
+		// Repopulate the object vectors in case the player wants to replay the game
 		ReInit(); 
 
 		while (SDL_PollEvent(&event)) {
@@ -413,7 +445,7 @@ void SpaceInvadersApp::Update(float elapsed) {
 	}
 }
 
-/* This is the game loop. It will be run continuously in a while loop in the main function of main.cpp
+/*	This is the game loop. It will be run continuously in a while loop in the main function of main.cpp
 */
 bool SpaceInvadersApp::UpdateAndRender() {
 
@@ -429,6 +461,8 @@ bool SpaceInvadersApp::UpdateAndRender() {
 	return done;
 }
 
+/*	This function will print strings onto the screen
+*/
 void SpaceInvadersApp::Text(GLuint Texture, string text, float size, float spacing, float r, float g, float b, float a) {
 	// Have to go character by character for the offsets...
 	// The 16 is the width of the sprite sheet in terms of the number of sprites
