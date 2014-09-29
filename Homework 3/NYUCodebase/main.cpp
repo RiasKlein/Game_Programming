@@ -16,7 +16,7 @@ Regarding this assignment:
 	- Player 1 Controls: 
 		A		to move LEFT
 		D		to move RIGHT
-		SPACE	to SHOOT
+		W		to SHOOT
 		ENTER	to CONTINUE
 	- The enemies are not equipped with long range weaponry and therefore cannot fight back
 	- High Scores are only kept for a single game session (once the application is closed, High Scores are reset)
