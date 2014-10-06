@@ -1,5 +1,6 @@
 #pragma once
 #include "SheetSprite.h"
+#define FIXED_TIMESTEP 0.0333333f // 30 FPS
 
 /*	The Entity class will be used for all the objects 
 */
@@ -11,7 +12,7 @@ public:
 	SheetSprite sprite;
 
 	//	Functions
-	void Update(float elapsed);
+	void Update();
 	void Render();
 	bool collidesWith(Entity *entity);
 	void FixedUpdate();
@@ -33,7 +34,7 @@ public:
 	float velocity_y = 0.0f;
 	float acceleration_x = 0.0f;
 	float acceleration_y = 0.0f;
-	float friction_x = 0.4f;
+	float friction_x = 10.0f;
 	float friction_y = 0.0f;
 	
 	float mass;							// Will not be used for this assignment

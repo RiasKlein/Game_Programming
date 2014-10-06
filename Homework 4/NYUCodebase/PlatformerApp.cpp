@@ -24,7 +24,7 @@ float PlatformerApp::lerp(float v0, float v1, float t) {
 */
 PlatformerApp::PlatformerApp() {
 	SDL_Init(SDL_INIT_VIDEO);
-	displayWindow = SDL_CreateWindow("Shunman Tse Assignment 4 - Sinlge Screen Platformer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL);
+	displayWindow = SDL_CreateWindow("Shunman Tse Assignment 4 - Single Screen Platformer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL);
 	SDL_GLContext context = SDL_GL_CreateContext(displayWindow);
 	SDL_GL_MakeCurrent(displayWindow, context);
 
@@ -374,7 +374,7 @@ void PlatformerApp::Update(float elapsed) {
 	}
 
 	// Create more coins as players loot coins -> infinite coins (capped by MAX_LOOT)
-	if (numLoot <= MAX_LOOT && spawnTimer > 0.2f) {
+	if (numLoot <= MAX_LOOT && spawnTimer > 0.5f) {
 	SheetSprite lootSprite = SheetSprite(items, 288.0f / 576.0f, 360.0f / 576.0f, 70.0f / 576.0f, 70.0f / 576.0f); // gold coin texture
 	Entity* loot = new Entity(lootSprite, 0.0f, 2.1f, 0.8f, 0.0f, 0.0f);
 
@@ -396,7 +396,7 @@ void PlatformerApp::Update(float elapsed) {
 */
 bool PlatformerApp::UpdateAndRender() {
 
-	float x_speed = 0.9f / 6.0f;
+	float x_speed = 50.0f * FIXED_TIMESTEP;
 
 	// First we update the timing of the game
 	float ticks = (float)SDL_GetTicks() / 1000.0f;
@@ -461,8 +461,15 @@ bool PlatformerApp::UpdateAndRender() {
 		}
 	}
 
+	float fixedElapsed = elapsed + timeLeftOver;
+
 	// Call Update and Render functions
-	FixedUpdate();		// Detect collisions and set flags
+	while (fixedElapsed >= FIXED_TIMESTEP){
+		FixedUpdate();		// Detect collisions and set flags
+		fixedElapsed -= FIXED_TIMESTEP;
+	}
+	timeLeftOver = fixedElapsed;
+	
 	Update(elapsed);	// Handle collisions
 	Render();
 

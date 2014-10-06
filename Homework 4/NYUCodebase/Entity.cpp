@@ -3,12 +3,11 @@
 Entity::Entity() {}
 Entity::Entity(SheetSprite sprite, float x, float y, float scale, float velocity_x, float velocity_y) : sprite(sprite), x(x), y(y), scale(scale), velocity_x(velocity_x), velocity_y(velocity_y) {}
 
-/*	This function moves the Entity based on its velocity_x (only applicable for the alien ships)
-The player ship moves based on speed rather than the velocity.
+/*	This function moves the Entity based on its velocity_x
 */
-void Entity::Update(float elapsed) {
-	x += velocity_x * elapsed;
-	y += velocity_y * elapsed;
+void Entity::Update() {
+	x += velocity_x * FIXED_TIMESTEP;
+	y += velocity_y * FIXED_TIMESTEP;
 }
 
 //	This function will draw the Entity on the screen using SheetSprite::Draw
@@ -18,7 +17,7 @@ void Entity::Render() {
 
 void Entity::Jump() {
 	inJump = true;
-	velocity_y = 1.6f / 4.0f;
+	velocity_y = 52.0f * FIXED_TIMESTEP;
 	collidedBot = false;
 }
 

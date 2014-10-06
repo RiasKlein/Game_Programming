@@ -12,7 +12,8 @@ using namespace std;
 
 
 #define MAX_LOOT 15
-#define FIXED_TIMESTEP 0.0166666f
+//#define FIXED_TIMESTEP 0.0166666f	// 60 FPS
+#define FIXED_TIMESTEP 0.0333333f // 30 FPS
 #define MAX_TIMESTEPS 6
 
 class PlatformerApp {
@@ -59,5 +60,5 @@ private:
 
 	//	Variables for Gravity
 	float gravity_x = 0.0f;
-	float gravity_y = 0.8f / 8.0f;
+	float gravity_y = 2.0f;
 };
