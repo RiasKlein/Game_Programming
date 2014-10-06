@@ -15,14 +15,12 @@ GLuint LoadTexture(const char *image_path) {
 	return textureID;
 }
 
-/*
-*/
 float PlatformerApp::lerp(float v0, float v1, float t) {
 	return (1.0f - t)*v0 + t*v1;
 }
 
 /*	This function sets up the basics for graphical displays on the screen.
-It also loads in all the texture files and fills various vectors with proper elements.
+	It also loads in all the texture
 */
 PlatformerApp::PlatformerApp() {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -38,8 +36,6 @@ PlatformerApp::PlatformerApp() {
 
 	//--- Load in textures
 	bg_texture = LoadTexture("background.png");				// 1024 * 1024
-	//enemies_texture = LoadTexture("enemy.png");				// 51 * 51
-	extras = LoadTexture("extras.png");						// 512 * 512
 	font = LoadTexture("font.png");							// 512 * 512
 	grass = LoadTexture("grassSheet.png");					// 512 * 512
 	items = LoadTexture("items.png");						// 576 * 576
@@ -49,11 +45,10 @@ PlatformerApp::PlatformerApp() {
 }
 
 /*	This function is run once at the start of the game.
-It populates the entities vector with the player and enemy ships
+	It populates the entities vector with players and walls of the game
 */
 void PlatformerApp::Init() {
 	lastFrameTicks = 0.0f;
-	bulletIndex = 0;
 
 	// Set up the background
 	SheetSprite background_texture = SheetSprite(bg_texture, 0.0, 0.0, 1024.0f/1024.0f, 1024.0f/1024.0f);
@@ -72,7 +67,7 @@ void PlatformerApp::Init() {
 	player2->isPlayer = true;
 	entities.push_back(player2);
 
-	// Set up the map
+	//--- Set up the map (mark floors / walls as static)
 	// Load in Floor texture (slice03_03.png)
 	SheetSprite floorSprite = SheetSprite(grass, 280.0f / 512.0f, 210.0f / 512.0f, 70.0f / 512.0f, 70.0f / 512.0f);
 
@@ -139,37 +134,6 @@ void PlatformerApp::Init() {
 		entities.push_back(floor);
 	}
 }
-/*
-void PlatformerApp::spawnEnemy() {
-
-	float enemyY = ((rand() % 401) / 100.0f) - 2.0f;
-	float enemyX;
-
-	SheetSprite enemySprite = SheetSprite(enemies_texture, 65.0f / 256.0f, 0.0f, 51.0f / 256.0f, 51.0f / 128.0f); // green block texture
-
-	// Change the value of enemyX based on enemyDirection
-	if (enemyDirection) {
-		enemyX = 1.0f;
-		enemyDirection = false;
-	}
-	else {
-		enemyX = -1.0f;
-		enemyDirection = true;
-	}
-
-	numEnemy += 1;
-	Entity* enemy = new Entity(enemySprite, 0.0f, 2.1f, 0.25f, enemyX, 0.0f);
-	enemy->isEnemy = true;
-	entities.push_back(enemy);
-}
-
-void PlatformerApp::spawnEnemy() {
-	SheetSprite enemySprite = SheetSprite(player_texture, 216.0f/512.0f, 72.0f/256.0f, 70.0f/512.0f, 70.0f/256.0f); // green block texture
-	Entity* enemy = new Entity(enemySprite, 0.0f, 2.1f, 0.4f, 0.0f, 0.0f);
-	enemy->isEnemy = true;
-	entities.push_back(enemy);
-}
-*/
 
 PlatformerApp::~PlatformerApp() {
 	SDL_Quit();
@@ -179,7 +143,7 @@ PlatformerApp::~PlatformerApp() {
 There are three states to consider: the main menu, the game level, and the game over screen
 */
 void PlatformerApp::Render() {
-	glClearColor(0.3f, 0.6f, 0.9f, 1.0f); // Blue Screen
+	//glClearColor(0.3f, 0.6f, 0.9f, 1.0f); // Default Clear Screen
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	background[0]->Render();
@@ -201,10 +165,12 @@ void PlatformerApp::Render() {
 	SDL_GL_SwapWindow(displayWindow);
 }
 
+/*	Physics friendly update function
+*/
 void PlatformerApp::FixedUpdate(){
 	for (size_t i = 0; i < entities.size(); i++) {
 
-		// Handle collisions
+		// Handle collision flags
 		if (entities[i]->collidedBot) {
 			// Our entity hit something on its bottom
 			entities[i]->inJump = false;	// the entity is no longer jumping
@@ -222,6 +188,7 @@ void PlatformerApp::FixedUpdate(){
 			entities[i]->acceleration_x = 0.0f;
 		}
 		if (entities[i]->collidedRight) {
+			// Our entity hit something on the right side
 			entities[i]->velocity_x = 0.0f; // prevent the entity from going through wall
 			entities[i]->acceleration_x = 0.0f;
 		}
@@ -259,6 +226,7 @@ void PlatformerApp::FixedUpdate(){
 						entities[i]->y += yPenetration + 0.001f;
 						entities[i]->collidedBot = true;
 
+						// Handle bottom collision
 						if (entities[i]->isPlayer){
 							if (entities[j]->isLoot){
 								if (!entities[j]->looted) {
@@ -286,6 +254,7 @@ void PlatformerApp::FixedUpdate(){
 						entities[i]->y -= yPenetration + 0.001f;
 						entities[i]->collidedTop = true;
 
+						// Handle top collision
 						if (entities[j]->isPlayer){
 							if (entities[i]->isPlayer) {
 								entities[i]->playerDead = true;
@@ -317,7 +286,8 @@ void PlatformerApp::FixedUpdate(){
 					if (entities[i]->x > entities[j]->x) {
 						entities[i]->x += xPenetration + 0.001f;
 						entities[i]->collidedLeft = true;
-	
+						
+						// Handle left collision
 						if (entities[j]->isLoot && entities[i]->isPlayer){
 							if (!entities[j]->looted) {
 								entities[i]->score += points;
@@ -335,6 +305,7 @@ void PlatformerApp::FixedUpdate(){
 						entities[i]->x -= xPenetration + 0.001f;
 						entities[i]->collidedRight = true;
 
+						// Handle right collision
 						if (entities[j]->isLoot && entities[i]->isPlayer){
 							if (!entities[j]->looted) {
 								entities[i]->score += points;
@@ -351,12 +322,11 @@ void PlatformerApp::FixedUpdate(){
 				}
 			}
 		}	
-
-
 	}
 } 
 
-/*	
+/*	Second update function to process non physics related things
+	Handles out of bounds / deleting objects / repositioning objects / creating new objects
 */
 void PlatformerApp::Update(float elapsed) {
 	
@@ -403,6 +373,7 @@ void PlatformerApp::Update(float elapsed) {
 
 	}
 
+	// Create more coins as players loot coins -> infinite coins (capped by MAX_LOOT)
 	if (numLoot <= MAX_LOOT && spawnTimer > 0.2f) {
 	SheetSprite lootSprite = SheetSprite(items, 288.0f / 576.0f, 360.0f / 576.0f, 70.0f / 576.0f, 70.0f / 576.0f); // gold coin texture
 	Entity* loot = new Entity(lootSprite, 0.0f, 2.1f, 0.8f, 0.0f, 0.0f);
@@ -418,7 +389,6 @@ void PlatformerApp::Update(float elapsed) {
 	}
 
 	spawnTimer += elapsed;
-
 }
 
 /*	Game loop
@@ -491,7 +461,7 @@ bool PlatformerApp::UpdateAndRender() {
 		}
 	}
 
-	// Call Update and Render
+	// Call Update and Render functions
 	FixedUpdate();		// Detect collisions and set flags
 	Update(elapsed);	// Handle collisions
 	Render();
