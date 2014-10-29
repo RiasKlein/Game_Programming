@@ -49,9 +49,15 @@ public:
 	bool readLayerData(ifstream& stream);
 	void RenderLevel();
 
-	void worldToTileCoordinates(float x, float y, int &gridX, int &gridY);
-	void tileToWorldCoordinatesX(float &x, int gridX);
-	void tileToWorldCoordinatesY(float &y, int gridY);
+	bool isSolid(unsigned char tile);
+
+	void worldToTileCoordinates(float worldX, float worldY, int*gridX, int*gridY);
+
+	float checkCollisionX(float x, float y);
+	float checkCollisionY(float x, float y);
+
+	void handleCollisionY(Entity *entity);
+	void handleCollisionX(Entity *entity);
 
 	bool collisionx();
 	bool collisiony();

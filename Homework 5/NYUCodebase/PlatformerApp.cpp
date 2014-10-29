@@ -1,5 +1,7 @@
 #include "PlatformerApp.h"
 
+
+
 /*	Use SDL to load in textures. The function returns GLuint textureID.
 */
 GLuint LoadTexture(const char *image_path) {
@@ -37,6 +39,8 @@ PlatformerApp::PlatformerApp() {
 	//--- Load in textures
 	spritesheet = LoadTexture("spritesheet.png");			// 819 x 21
 	font = LoadTexture("font.png");							// 512 x 512
+
+	//OutputDebugStringA("asd");
 
 	Init();
 }
@@ -225,8 +229,8 @@ void PlatformerApp::Render() {
 	SDL_GL_SwapWindow(displayWindow);
 }
 
-/*	Physics friendly update function
-*/
+//	Physics friendly update function
+
 void PlatformerApp::FixedUpdate(){
 	for (size_t i = 0; i < entities.size(); i++) {
 
@@ -310,7 +314,7 @@ void PlatformerApp::FixedUpdate(){
 			}
 		}	
 	}
-} 
+}
 
 void PlatformerApp::Update(float elapsed) {
 	
@@ -327,11 +331,12 @@ void PlatformerApp::Update(float elapsed) {
 
 }
 
-void PlatformerApp::worldToTileCoordinates(float x, float y, int &gridx, int &gridy){
-	gridx = (int)((x) / TILE_SIZE);
-	gridy = (int)((-y) / TILE_SIZE);
+void PlatformerApp::worldToTileCoordinates(float worldX, float worldY, int*gridX, int*gridY) {
+	*gridX = (int)((worldX) / TILE_SIZE);
+	*gridY = (int)((-worldY) / TILE_SIZE);
 }
 
+/*
 void PlatformerApp::tileToWorldCoordinatesX(float &x, int gridx){
 	x = ((float)gridx)*TILE_SIZE;
 }
@@ -339,8 +344,12 @@ void PlatformerApp::tileToWorldCoordinatesX(float &x, int gridx){
 void PlatformerApp::tileToWorldCoordinatesY(float &y, int gridy){
 	y = -((float)gridy)*TILE_SIZE;
 }
+*/
 
 bool PlatformerApp::UpdateAndRender() {
+
+	// Debugging
+	OutputDebugStringA("");
 
 	float x_speed = 50.0f * FIXED_TIMESTEP;
 	float ticks = (float)SDL_GetTicks() / 1000.0f;
@@ -384,8 +393,93 @@ bool PlatformerApp::UpdateAndRender() {
 	return done;
 }
 
-/*	This function will print strings onto the screen
-*/
+
+bool PlatformerApp::isSolid(unsigned char tile){
+	// Returns whether something is solid or not based on their value in levelData
+	switch (tile){
+	case 11:
+		return true;
+		break;
+	case 12:
+		return true;
+		break;
+	case 13:
+		return true;
+		break;
+	case 14:
+		return true;
+		break;
+	case 31:
+		return true;
+		break;
+	case 32:
+		return true;
+		break;
+	case 33:
+		return true;
+		break;
+	default:
+		return false;
+		break;
+	}
+}
+
+float PlatformerApp::checkCollisionX(float x, float y) {
+	int gridX, gridY;
+	worldToTileCoordinates(x, y, &gridX, &gridY);
+
+	if (isSolid(levelData[gridY][gridX])) {
+		return 0.004f;
+	}
+	return 0.0f;
+}
+
+float PlatformerApp::checkCollisionY(float x, float y) {
+	int gridX, gridY;
+	worldToTileCoordinates(x, y, &gridX, &gridY);
+
+	if (isSolid(levelData[gridY][gridX])) {
+
+		float yCoordinate = (gridY * TILE_SIZE) - (TILE_SIZE*16.0);
+		return -y - yCoordinate;
+
+	}
+	return 0.0f;
+}
+
+void PlatformerApp::handleCollisionX(Entity *entity) {
+	//check right
+
+	float adjust = checkCollisionX(entity->x + TILE_SIZE*0.5, entity->y);
+	if (adjust != 0.0f) {
+		entity->x -= adjust;
+		entity->velocity_x = 0.0f;
+		entity->collidedRight = true;
+	}
+
+	//check left
+
+	adjust = checkCollisionX(entity->x - TILE_SIZE*0.5, entity->y);
+	if (adjust != 0.0f) {
+		entity->x += adjust;
+		entity->velocity_x = 0.0f;
+		entity->collidedLeft = true;
+	}
+
+}
+
+void PlatformerApp::handleCollisionY(Entity *entity) {
+	//check bottom
+
+	float adjust = checkCollisionY(entity->x, entity->y - TILE_SIZE*0.5);
+	if (adjust != 0.0f) {
+		entity->y += adjust;
+		entity->velocity_y = 0.0f;
+		entity->collidedBot = true;
+	}
+}
+
+
 void PlatformerApp::Text(GLuint Texture, string text, float size, float spacing, float r, float g, float b, float a) {
 	// Have to go character by character for the offsets...
 	// The 16 is the width of the sprite sheet in terms of the number of sprites
