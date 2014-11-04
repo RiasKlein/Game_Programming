@@ -5,11 +5,7 @@
 #include <SDL_mixer.h>
 #include <vector>
 #include <math.h>
-#include <string>
 #include <algorithm>
-#include <fstream>
-#include <iostream>
-#include <sstream>
 #include <time.h>
 #include "Bullet.h"
 #include "Entity.h"
