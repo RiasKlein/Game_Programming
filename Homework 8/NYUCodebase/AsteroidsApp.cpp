@@ -1,10 +1,6 @@
 #include "AsteroidsApp.h"
 
 //	LERP and Random Number Generation functions
-float lerp(float v0, float v1, float t) {
-	return (1.0f - t)*v0 + t*v1;
-}
-
 float genRandomNum(float low, float high) {
 	return low + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (high - low)));
 }
@@ -122,6 +118,14 @@ void AsteroidsApp::Update(float elapsed) {
 	if (keys[SDL_SCANCODE_UP]) {
 		player->velocity_x = 0.8f;
 		player->velocity_y = 0.8f;
+
+		ParticleEmitter engineParticles(50);
+		engineParticles.maxLifetime = 0.1f;
+		engineParticles.position = Vector(player->x, player->y, 0.0f);
+		engineParticles.velocity = Vector(-sin(player->rotation)*player->velocity_x*2, cos(player->rotation)*player->velocity_y*2, 0.0f);
+		engineParticles.velocityDeviation = Vector(0.3f, 0.5f, 0.0f);
+		particleEmitters.push_back(engineParticles);
+		particleEmitters.back().effect();
 	}
 	else if (keys[SDL_SCANCODE_DOWN]) {
 		player->velocity_x = 0.0f;
@@ -135,13 +139,17 @@ void AsteroidsApp::Update(float elapsed) {
 		player->rotation -= 3.0f * elapsed;
 	}
 
-	//	Update Entities / Bullets
+	//	Update Entities / Bullets / Particles
 	for (unsigned int i = 0; i < entities.size(); i++) {
 		entities[i]->Update(elapsed);
 	}
 
 	for (unsigned int i = 0; i < MAX_BULLETS; i++) {
 		bullets[i].Update(elapsed);
+	}
+
+	for (unsigned int i = 0; i < particleEmitters.size(); i++){
+		particleEmitters[i].Update(elapsed);
 	}
 
 	//	Limiting the player's position
@@ -160,11 +168,19 @@ void AsteroidsApp::Update(float elapsed) {
 
 	//	Update bullet cooldown
 	bulletCD += elapsed;
+
+	//	Clearing Particles
+	for (unsigned int i = 0; i < particleEmitters.size(); i++){
+		if (particleEmitters[i].lifetime > particleEmitters[i].maxLifetime) {
+			particleEmitters[i].particles.clear();
+
+		}
+	}
 }
 
 void AsteroidsApp::FixedUpdate() {
 
-	for (size_t i = 0; i < entities.size(); i++) {
+	for (unsigned int i = 0; i < entities.size(); i++) {
 		entities[i]->FixedUpdate();
 		
 		if (!entities[i]->isStatic) {
@@ -198,13 +214,37 @@ void AsteroidsApp::FixedUpdate() {
 		entities[i]->x += entities[i]->velocity_x * sin(entities[i]->rotation) * FIXED_TIMESTEP;
 	}
 
-	for (int i = 1; i < entities.size(); i++) {
-		for (int k = 0; k < MAX_BULLETS; k++) {
+	for (unsigned int i = 1; i < entities.size(); i++) {
+		// Collision with player
+		if (checkCollision(entities[i], entities[0])){
+			Vector path = Vector((entities[i]->x - entities[0]->x), (entities[i]->y - entities[0]->y), 0.0f);
+
+			//	Effect
+			ParticleEmitter bumpParticles(50);
+			bumpParticles.maxLifetime = 0.1f;
+			bumpParticles.position = Vector(entities[0]->x + path.x * 0.15f, entities[0]->y + path.y * 0.15f, 0.0f);
+			bumpParticles.velocity = Vector(path.x, path.y, 0.0f);
+			bumpParticles.velocityDeviation = Vector(0.5f + ((float)rand() / (float)RAND_MAX)*0.5f, 0.5f + ((float)rand() / (float)RAND_MAX)*0.5f, 0.0f);
+			particleEmitters.push_back(bumpParticles);
+			particleEmitters.back().effect();
+		}
+
+		for (unsigned int k = 0; k < MAX_BULLETS; k++) {
 			if (bullets[k].visible && checkCollision(entities[i], &bullets[k])) {
 
 				bullets[k].visible = false;
 
 				if (entities[i]->scale_x < 0.99f) {
+					//	Effect
+					ParticleEmitter asteroidParticles(500);
+					asteroidParticles.maxLifetime = 0.5f;
+					asteroidParticles.position = Vector(entities[i]->x, entities[i]->y, 0.0f);
+					asteroidParticles.velocity = Vector(sin(player->rotation)*bullets[k].velocity_x / 4, -cos(player->rotation)*bullets[k].velocity_y / 4, 0.0f);
+					asteroidParticles.velocityDeviation = Vector(0.5f + ((float)rand() / (float)RAND_MAX)*0.5f, 0.5f + ((float)rand() / (float)RAND_MAX)*0.5f, 0.0f);
+					particleEmitters.push_back(asteroidParticles);
+					particleEmitters.back().effect();
+
+					//	Delete Entity (asteroid)
 					delete entities[i];
 					entities.erase(entities.begin() + i);
 					break;
@@ -214,7 +254,16 @@ void AsteroidsApp::FixedUpdate() {
 					entities[i]->scale_y = entities[i]->scale_y * 0.7f;
 					entities[i]->rotation = genRandomNum(-90.0f, 90.0f);
 
-					//	Splitting the Asteroid
+					//	Effect
+					ParticleEmitter asteroidParticles(500);
+					asteroidParticles.maxLifetime = 0.5f;
+					asteroidParticles.position = Vector(entities[i]->x, entities[i]->y, 0.0f);
+					asteroidParticles.velocity = Vector(sin(player->rotation)*bullets[k].velocity_x / 4, -cos(player->rotation)*bullets[k].velocity_y / 4, 0.0f);
+					asteroidParticles.velocityDeviation = Vector(0.5f + ((float)rand() / (float)RAND_MAX)*0.5f, 0.5f + ((float)rand() / (float)RAND_MAX)*0.5f, 0.0f);
+					particleEmitters.push_back(asteroidParticles);
+					particleEmitters.back().effect();
+
+					//	Splitting the Asteroid (Physical)
 					SheetSprite asteroidSprite = SheetSprite(spriteSheetTexture, 224.0f / 1024.0f, 664.0f / 1024.0f, 101.0f / 1024.0f, 84.0f / 1024.0f);
 					Entity* asteroid = new Entity();
 					asteroid->sprite = asteroidSprite;
@@ -237,13 +286,18 @@ void AsteroidsApp::Render() {
 	background->Render();
 
 	//	Render Entities
-	for (size_t i = 0; i < entities.size(); i++) {
+	for (unsigned int i = 0; i < entities.size(); i++) {
 		entities[i]->Render();
 	}
 
 	//	Render Bullets
-	for (size_t i = 0; i < MAX_BULLETS; i++) {
+	for (unsigned int i = 0; i < MAX_BULLETS; i++) {
 		bullets[i].Render();
+	}
+
+	//	Render Particles
+	for (unsigned int i = 0; i < particleEmitters.size(); i++){
+		particleEmitters[i].Render();
 	}
 
 	SDL_GL_SwapWindow(displayWindow);

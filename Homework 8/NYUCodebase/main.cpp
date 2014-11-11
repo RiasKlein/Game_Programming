@@ -1,11 +1,6 @@
 /*	Name: Shunman Tse
 	Fall 2014 - CS3113 Intro to Game Programming
-	Assignment 7: Asteroids
-*/
-
-/*	Assignment Details:
-	- Make simple asteroids
-	- You must use transformation matrices and non-axis-aligned collisions!
+	Assignment 8: Adding Effects
 */
 
 /* About this game:
@@ -15,6 +10,12 @@
 	DOWN :	All stop
 
 	SPACE : Shoot
+*/
+
+/*	Effects
+	1. Player engines
+	2. Crashing into asteroids
+	3. Destroying asteroids
 */
 
 #include "AsteroidsApp.h"

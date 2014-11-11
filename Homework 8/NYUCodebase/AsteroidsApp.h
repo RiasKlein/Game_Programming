@@ -10,6 +10,7 @@
 #include "Bullet.h"
 #include "Entity.h"
 #include "Player.h"
+#include "ParticleEmitter.h"
 
 #define FIXED_TIMESTEP	0.0166666f
 #define MAX_TIMESTEPS	6
@@ -52,4 +53,6 @@ private:
 
 	Mix_Chunk* bullet;
 	Mix_Music* music;
+
+	vector<ParticleEmitter> particleEmitters;
 };
