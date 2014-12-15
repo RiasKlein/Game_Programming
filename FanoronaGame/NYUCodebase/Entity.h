@@ -1,5 +1,6 @@
 #pragma once
 #include "SheetSprite.h"
+#include <vector>
 #define FIXED_TIMESTEP 0.0333333f // 30 FPS
 
 /*	The Entity class will be used for all the objects 
@@ -12,7 +13,7 @@ public:
 	SheetSprite sprite;			// Default sprite for this entity
 
 	//	Functions
-	void Update();
+	void Update(float elapsed);
 	void Render();
 	bool collidesWith(Entity *entity);
 	void FixedUpdate();
@@ -26,7 +27,13 @@ public:
 	float y = 0.0f;
 	float scale = 1.0f;
 	float rotation = 0.0f;
-	bool flipped = false;				
+	bool flipped = false;	
+
+	//	Animation requirements
+	float timeToComplete = 0.0f;				//	Total time we have to complete the animations	(MUST BE GIVEN)
+	float timeOnFrame = 0.0f;					//	Time spent on the current frame
+	int frameIndex = 0;							//	Starting frame index is 0
+	std::vector<SheetSprite> animationFrames;	//	Vector of animation frames						(MUST BE GIVEN)
 
 	//	Variables affecting Collision
 	bool isStatic = false;				// Should forces affect this entity? We shall assume false (for most entities) and set to true when needed 

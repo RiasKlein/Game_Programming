@@ -9,15 +9,20 @@ public:
 	SheetSprite sprite;
 
 	//	Functions
-	void Update();
+	void Update(float elapsed);
 	void Render();
 
 	//	Variables required for SheetSprite::Draw
 	float x = 0.0f;
 	float y = 0.0f;
 	float scale = 0.6f;
-	float rotation = 0.0f;
+	float rotation = 180.0f;
 	bool flipped = false;
+
+	//	For animations
+	float rotationPLIMIT = 0.0f;		// Used for animations
+	float rotationNLIMIT = 0.0f;		// Used for animations
+	bool rotateUP = true;
 	
 	int boardCol;			//	The column that the chip is at (on the board)
 	int boardRow;			//	The row that the chip is at (on the board)

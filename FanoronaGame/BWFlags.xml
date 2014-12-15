@@ -1,0 +1,28 @@
+<TextureAtlas imagePath="sprites.png">
+	<SubTexture name="black01.png" u="364" v="226" width="25" height="112"/>
+	<SubTexture name="black02.png" u="387" v="113" width="25" height="112"/>
+	<SubTexture name="black03.png" u="355" v="113" width="31" height="112"/>
+	<SubTexture name="black04.png" u="322" v="226" width="41" height="112"/>
+	<SubTexture name="black05.png" u="271" v="0" width="51" height="112"/>
+	<SubTexture name="black06.png" u="270" v="226" width="51" height="112"/>
+	<SubTexture name="black07.png" u="218" v="113" width="52" height="112"/>
+	<SubTexture name="black08.png" u="164" v="0" width="53" height="112"/>
+	<SubTexture name="black09.png" u="110" v="113" width="53" height="112"/>
+	<SubTexture name="black10.png" u="0" v="0" width="55" height="112"/>
+	<SubTexture name="black11.png" u="0" v="226" width="54" height="112"/>
+	<SubTexture name="black12.png" u="164" v="113" width="53" height="112"/>
+	<SubTexture name="black13.png" u="110" v="0" width="53" height="112"/>
+	<SubTexture name="white01.png" u="390" v="226" width="25" height="112"/>
+	<SubTexture name="white02.png" u="365" v="0" width="25" height="112"/>
+	<SubTexture name="white03.png" u="323" v="113" width="31" height="112"/>
+	<SubTexture name="white04.png" u="323" v="0" width="41" height="112"/>
+	<SubTexture name="white05.png" u="218" v="226" width="51" height="112"/>
+	<SubTexture name="white06.png" u="271" v="113" width="51" height="112"/>
+	<SubTexture name="white07.png" u="218" v="0" width="52" height="112"/>
+	<SubTexture name="white08.png" u="164" v="226" width="53" height="112"/>
+	<SubTexture name="white09.png" u="110" v="226" width="53" height="112"/>
+	<SubTexture name="white10.png" u="0" v="113" width="55" height="112"/>
+	<SubTexture name="white11.png" u="55" v="226" width="54" height="112"/>
+	<SubTexture name="white12.png" u="56" v="113" width="53" height="112"/>
+	<SubTexture name="white13.png" u="56" v="0" width="53" height="112"/>
+</TextureAtlas>

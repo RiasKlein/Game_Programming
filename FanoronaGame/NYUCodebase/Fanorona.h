@@ -3,8 +3,8 @@
 #include <SDL_opengl.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
-#include <cmath>
-#include <vector>
+//#include <cmath>
+//#include <vector>
 #include <string>
 #include <stdio.h>
 #include <string>
@@ -13,6 +13,7 @@
 //#include "SheetSprite.h"
 #include "Entity.h"
 #include "Chip.h"
+#include "MovingText.h"
 
 using namespace std;
 
@@ -35,8 +36,6 @@ public:
 	int MouseToBoardRow(float mouseY);
 	int MouseToBoardCol(float mouseX);
 
-
-
 	void clearChipsMoves(vector<Chip*> currentchips);
 	void populateChipMoves(Chip* chip, vector<Chip*> currentchips, bool is3x3board);
 
@@ -45,6 +44,9 @@ public:
 	void processCapture();
 	void processPaika();
 	void endTurn();
+
+	//	Functions related to animations 
+	void populatePossibleAttacks(Chip* chip);
 
 	//	Function for printing text to the screen
 	void Text(GLuint Texture, string text, float size, float spacing, float r, float g, float b, float a);
@@ -60,16 +62,12 @@ private:
 
 	//	Textures
 	GLuint font;						//	Font texture
-	//GLuint logo_texture;				//	Logo texture
 	GLuint title_texture;				//	Title page texture
-	//GLuint black_texture;				//	Black player texture
-	//GLuint white_texture;				//	White player texture
-	//GLuint board3x3_texture;			//	Texture for the 3x3 board
-	//GLuint board5x5_texture;			//	Texture for the 5x5 board
 	GLuint ui_texture;					//	Texture for the UI
-
-	GLuint boards_logo_texture;			// 602 * 602
-	GLuint players_texture;				// 138 * 138
+	GLuint boards_logo_texture;			//	Texture with the different boards and the logo : 602 * 602
+	GLuint players_texture;				//	Texture with the player chips : 138 * 138
+	GLuint flags_texture;				//	Texture for the flag animations : 416 * 416
+	GLuint movingtext_texture;			//	Texture for moving text objects : 882 * 882
 
 	//	Music & Sounds
 	vector<Mix_Music*> gameMusic;		//	Index 0 is the title music, everything else are variations of game music
@@ -78,16 +76,17 @@ private:
 	bool updatemusic = false;			//	Whether there is a need to update the music channel
 	bool updatevolume = false;			//	Whether there is a need to update the volume of the channel
 
-	/*
-	Mix_Chunk* jump_sound;
-	Mix_Chunk* loot_sound;
-	*/
+	Mix_Chunk* chipMove_sound;
+	Mix_Chunk* button_sound;
 
 	Entity* board;						//	Image Entity of the current board being played on
 	vector<Entity*> mainmenu;			//	Vector of Entities for the main menu
 	vector<Chip*> currentchips;			//	Vector of chips on the current board
 
-	
+	//	Related to ANIMATIONS
+	vector<Chip*> possibleATTACKS;		//	Vector of sword animations to show chips that can be attacked
+	vector<Entity*> animatedBflags;		//	Entity of black flag animations	
+	vector<Entity*> animatedWflags;		//	Entity of white flag animations
 	
 	//	Variables to handle a player turn
 	bool paikaEnabled = false;			//	Whether paika is allowed for the current turn
@@ -106,8 +105,11 @@ private:
 	bool playerisWhite = true;			//	Whether the player is white or not
 
 	//	Game states
-	enum GameState {STATE_MAINMENU, STATE_WHITEPLAYER, STATE_BLACKPLAYER, STATE_GAMEOVER};
+	enum GameState {STATE_MAINMENU, STATE_WHITEPLAYER, STATE_BLACKPLAYER, STATE_GAMEOVER, STATE_GAMERULES1, STATE_GAMERULES2};
 	int gamestate = STATE_MAINMENU;		// The initial game state is the main menu
+
+	enum GameMenu { MENU_OFF, MENU_ON };
+	int gamemenu = MENU_OFF;
 
 	//	Gameover states
 	enum GamOver { GAMEOVER_NULL, GAMEOVER_WHITEWINS, GAMEOVER_BLACKWINS, GAMEOVER_DRAW };
@@ -126,4 +128,5 @@ private:
 	bool LOG_CHIPSSIZE = true;			// Console log: entry for the size of the currentchips vector
 	bool LOG_CLICKEDCHIP = true;		// Console log: entry for the chip for that was clicked
 	bool LOG_POPULATECHIPMOVES = true;	// Console log: entry for the results of populateChipMoves
+	bool LOG_MENUS = true;
 };

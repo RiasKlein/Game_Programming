@@ -3,9 +3,25 @@
 Entity::Entity() {}
 Entity::Entity(SheetSprite sprite, float x, float y, float scale) : sprite(sprite), x(x), y(y), scale(scale) {}
 
-/*	This function moves the Entity based on its velocity_x
+/*	This function updates the Entity
 */
-void Entity::Update() {
+void Entity::Update(float elapsed) {
+	//	Update the amount of time we've been on the frame
+	timeOnFrame += elapsed;
+
+	//	Look at whether it's time for a frame swap
+	if (timeOnFrame > (timeToComplete / (float)animationFrames.size())){
+		// It's time for a frame swap
+		timeOnFrame = 0.0f;
+
+		// Look at Index to see if it needs to be reset
+		frameIndex += 1;
+		if (frameIndex == animationFrames.size()) {
+			frameIndex = 0;
+		}
+
+		sprite = animationFrames[frameIndex];
+	}
 
 }
 

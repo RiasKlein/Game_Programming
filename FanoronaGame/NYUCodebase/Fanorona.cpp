@@ -63,19 +63,21 @@ void Fanorona::Init() {
 	//--- Load in textures
 	//======================================================================================================================
 
-	font = LoadTexture("font.png");									// 512 * 512
-	title_texture = LoadTexture("title.png");						// 1920 * 1080
-	ui_texture = LoadTexture("ui.png");								// 512 * 512
-	boards_logo_texture = LoadTexture("boards&logo.png");			// 602 * 602
-	players_texture = LoadTexture("players.png");					// 138 * 138
+	font = LoadTexture("font.png");									//	512 * 512
+	title_texture = LoadTexture("title.png");						//	1920 * 1080
+	ui_texture = LoadTexture("ui.png");								//	512 * 512
+	boards_logo_texture = LoadTexture("boards&logo.png");			//	602 * 602
+	players_texture = LoadTexture("players.png");					//	138 * 138
+	flags_texture = LoadTexture("BWFlags.png");						//	416 * 416
+	movingtext_texture = LoadTexture("movingtext.png");				//	882 * 882
 
 	//======================================================================================================================
 	//--- Load in Music / Sounds
 	//======================================================================================================================
-	/*
-	jump_sound = Mix_LoadWAV("jump.wav");
-	loot_sound = Mix_LoadWAV("loot_sound.wav");
-	*/
+
+	chipMove_sound = Mix_LoadWAV("chipMoveSound.wav");
+	button_sound = Mix_LoadWAV("buttonSound.wav");
+
 	gameMusic.push_back(Mix_LoadMUS("title.mp3"));
 	gameMusic.push_back(Mix_LoadMUS("track01.mp3"));
 	gameMusic.push_back(Mix_LoadMUS("track02.mp3"));
@@ -106,7 +108,7 @@ void Fanorona::Init() {
 	Entity* boardsetting = new Entity(boardsettingsprite, 1.1f, 1.0f, 2.0f);
 	mainmenu.push_back(boardsetting);
 
-	/* Player Setting : mainmenu[3]
+	// Rulebook : mainmenu[3]
 	Entity* playersetting = new Entity(boardsettingsprite, 1.1f, 0.45f, 2.0f);
 	mainmenu.push_back(playersetting);
 	//===*/
@@ -114,25 +116,103 @@ void Fanorona::Init() {
 	SheetSprite left_sprite = SheetSprite(ui_texture, 193.0f / 512.0f, 486.0f / 512.0f, 22.0f / 512.0f, 21.0f / 512.0f);
 	SheetSprite right_sprite = SheetSprite(ui_texture, 215.0f / 512.0f, 486.0f / 512.0f, 22.0f / 512.0f, 21.0f / 512.0f);
 
-	// Track Setting (-) : mainmenu[3]
+	// Track Setting (-) : mainmenu[4]
 	Entity* tracksettingLEFT = new Entity(left_sprite, 0.45f, -0.5f, 2.0f);
 	mainmenu.push_back(tracksettingLEFT);
 
-	// Track Setting (+) : mainmenu[4]
+	// Track Setting (+) : mainmenu[5]
 	Entity* tracksettingRIGHT = new Entity(right_sprite, 1.75f, -0.5f, 2.0f);
 	mainmenu.push_back(tracksettingRIGHT);
 
-	// Volume Setting (-) : mainmenu[5]
+	// Volume Setting (-) : mainmenu[6]
 	Entity* volumesettingLEFT = new Entity(left_sprite, 1.0f, -0.90f, 2.0f);
 	mainmenu.push_back(volumesettingLEFT);
 
-	// Volume Setting (+) : mainmenu[6]
+	// Volume Setting (+) : mainmenu[7]
 	Entity* volumesettingRIGHT = new Entity(right_sprite, 1.75f, -0.90f, 2.0f);
 	mainmenu.push_back(volumesettingRIGHT);
 
-	// Start Button : mainmenu[7]
+	// Start Button : mainmenu[8]
 	Entity* startbutton = new Entity(boardsettingsprite, 1.1f, -1.62f, 2.0f);
 	mainmenu.push_back(startbutton);
+
+	// Next Page Button -> : mainmenu[9]
+	Entity* nextPageRight = new Entity(right_sprite, 1.5f, -1.5f, 5.0f);
+	mainmenu.push_back(nextPageRight);
+
+	// Next Page Button <- : mainmenu[10]
+	Entity* nextPageLeft = new Entity(left_sprite, -1.5f, -1.5f, 5.0f);
+	mainmenu.push_back(nextPageLeft);
+
+	//======================================================================================================================
+	//--- Set up FLAG animations
+	//		The flag animations will be used in the game over state for the winning team
+	//======================================================================================================================
+	float flagAnimationTime = 1.0f;		// The number of seconds for the flags to finish their animations
+
+	//	White Flag
+	SheetSprite whiteflag05 = SheetSprite(flags_texture, 218.0f / 416.0f, 226.0f / 416.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+	SheetSprite whiteflag06 = SheetSprite(flags_texture, 271.0f / 416.0f, 113.0f / 416.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+	SheetSprite whiteflag07 = SheetSprite(flags_texture, 218.0f / 416.0f, 0.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+	SheetSprite whiteflag08 = SheetSprite(flags_texture, 164.0f / 416.0f, 226.0f / 416.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+	SheetSprite whiteflag09 = SheetSprite(flags_texture, 110.0f / 416.0f, 226.0f / 416.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+	SheetSprite whiteflag10 = SheetSprite(flags_texture, 0.0f, 113.0f / 416.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+	SheetSprite whiteflag11 = SheetSprite(flags_texture, 55.0f / 416.0f, 226.0f / 416.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+	SheetSprite whiteflag12 = SheetSprite(flags_texture, 56.0f / 416.0f, 113.0f / 416.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+	SheetSprite whiteflag13 = SheetSprite(flags_texture, 56.0f / 416.0f, 0.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+
+	Entity* leftWhiteFlag = new Entity(whiteflag05, -1.4f, -0.5f, 2.0f);
+	Entity* rightWhiteFlag = new Entity(whiteflag05, 1.4f, -0.5f, 2.0f);
+	animatedWflags.push_back(leftWhiteFlag);
+	animatedWflags.push_back(rightWhiteFlag);
+	
+	for (unsigned int i = 0; i < animatedWflags.size(); i++) {
+		animatedWflags[i]->timeToComplete = flagAnimationTime;
+		animatedWflags[i]->animationFrames.push_back(whiteflag06);
+		animatedWflags[i]->animationFrames.push_back(whiteflag07);
+		animatedWflags[i]->animationFrames.push_back(whiteflag08);
+		animatedWflags[i]->animationFrames.push_back(whiteflag09);
+		animatedWflags[i]->animationFrames.push_back(whiteflag10);
+		animatedWflags[i]->animationFrames.push_back(whiteflag11);
+		animatedWflags[i]->animationFrames.push_back(whiteflag12);
+		animatedWflags[i]->animationFrames.push_back(whiteflag13);
+		animatedWflags[i]->animationFrames.push_back(whiteflag05);
+	}
+
+	//	Black Flag
+	SheetSprite blackflag05 = SheetSprite(flags_texture, 271.0f / 416.0f, 0.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+	SheetSprite blackflag06 = SheetSprite(flags_texture, 270.0f / 416.0f, 226.0f / 416.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+	SheetSprite blackflag07 = SheetSprite(flags_texture, 218.0f / 416.0f, 113.0f / 416.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+	SheetSprite blackflag08 = SheetSprite(flags_texture, 164.0f / 416.0f, 0.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+	SheetSprite blackflag09 = SheetSprite(flags_texture, 110.0f / 416.0f, 113.0f / 416.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+	SheetSprite blackflag10 = SheetSprite(flags_texture, 0.0f, 0.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+	SheetSprite blackflag11 = SheetSprite(flags_texture, 0.0f, 226.0f / 416.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+	SheetSprite blackflag12 = SheetSprite(flags_texture, 164.0f / 416.0f, 113.0f / 416.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+	SheetSprite blackflag13 = SheetSprite(flags_texture, 110.0f / 416.0f, 0.0f, 53.0f / 416.0f, 112.0f / 416.0f);
+
+	Entity* leftBlackFlag = new Entity(blackflag05, -1.4f, -0.5f, 2.0f);
+	Entity* rightBlackFlag = new Entity(blackflag05, 1.4f, -0.5f, 2.0f);
+	animatedBflags.push_back(leftBlackFlag);
+	animatedBflags.push_back(rightBlackFlag);
+
+	for (unsigned int i = 0; i < animatedBflags.size(); i++) {
+		animatedBflags[i]->timeToComplete = flagAnimationTime;
+		animatedBflags[i]->animationFrames.push_back(blackflag06);
+		animatedBflags[i]->animationFrames.push_back(blackflag07);
+		animatedBflags[i]->animationFrames.push_back(blackflag08);
+		animatedBflags[i]->animationFrames.push_back(blackflag09);
+		animatedBflags[i]->animationFrames.push_back(blackflag10);
+		animatedBflags[i]->animationFrames.push_back(blackflag11);
+		animatedBflags[i]->animationFrames.push_back(blackflag12);
+		animatedBflags[i]->animationFrames.push_back(blackflag13);
+		animatedBflags[i]->animationFrames.push_back(blackflag05);
+	}
+
+	//======================================================================================================================
+	//--- Set up Moving Text Objects
+	//		The flag animations will be used in the game over state for the winning team
+	//======================================================================================================================
+
 }
 
 /*	~Fanorona()
@@ -140,17 +220,15 @@ void Fanorona::Init() {
 */
 Fanorona::~Fanorona() {
 	//======================================================================================================================
-	//--- Free the Music Assets that were loaded in
+	//--- Free the Music / Sound Assets that were loaded in
 	//		In the following code, the music tracks that were loaded in for the game are freed. 
 	//======================================================================================================================
 	for (unsigned int i = 0; i < gameMusic.size(); i++){
 		Mix_FreeMusic(gameMusic[i]);
 	}
 
-	/*
-	Mix_FreeChunk(loot_sound);
-	Mix_FreeChunk(jump_sound);
-	*/
+	Mix_FreeChunk(chipMove_sound);
+	Mix_FreeChunk(button_sound);
 
 	//======================================================================================================================
 	//--- Close the game
@@ -172,7 +250,7 @@ void Fanorona::Render() {
 		//		First the Entity objects of the main menu are rendered onto the screen
 		//		Then the text to accompany those Entities are rendered onto the screen
 		//==================================================================================================================
-		for (unsigned int i = 0; i < mainmenu.size(); i++){
+		for (unsigned int i = 0; i < 9; i++){
 			mainmenu[i]->Render();
 		}
 
@@ -218,15 +296,10 @@ void Fanorona::Render() {
 			Text(font, "7x7 Board", 0.22f, -0.095f, 191.0f / 255.0f, 127.0f / 255.0f, 63.0f / 255.0f, 1.0f);
 		}
 
-		/* Text : Player Setting -- Tell whether player is white or black
+		//=== Text : Game Rules
 		glLoadIdentity();
-		glTranslatef(0.47f, 0.48f, 0.0f);
-		if (playerisWhite) {
-			Text(font, "Player: White", 0.20f, -0.095f, 191.0f / 255.0f, 127.0f / 255.0f, 63.0f / 255.0f, 1.0f);
-		}
-		else {
-			Text(font, "Player: Black", 0.20f, -0.095f, 191.0f / 255.0f, 127.0f / 255.0f, 63.0f / 255.0f, 1.0f);
-		}
+		glTranslatef(0.55f, 0.48f, 0.0f);
+		Text(font, "Game Rules", 0.22f, -0.095f, 191.0f / 255.0f, 127.0f / 255.0f, 63.0f / 255.0f, 1.0f);
 		//===*/
 
 		// Text : Start Button
@@ -250,6 +323,11 @@ void Fanorona::Render() {
 			currentchips[i]->Render();
 		}
 
+		//	Render the attack icons on the board
+		for (unsigned int i = 0; i < possibleATTACKS.size(); i++) {
+			possibleATTACKS[i]->Render();
+		}
+
 	} // above is Render() : gamestate == STATE_WHITEPLAYER || gamestate == STATE_BLACKPLAYER
 	
 	else if (gamestate == STATE_GAMEOVER) {
@@ -258,18 +336,28 @@ void Fanorona::Render() {
 		for (unsigned int i = 0; i < currentchips.size(); i++){
 			currentchips[i]->Render();
 		}
-		mainmenu[7]->Render();	//	Render a button where the start button would've been in the main menu
+		mainmenu[8]->Render();	//	Render a button where the start button would've been in the main menu
 
 		//	Print out who won!
 		if (gameover == GAMEOVER_WHITEWINS) { // White won!
 			glLoadIdentity();
 			glTranslatef(-1.75f, +0.5f, 0.0f);
 			Text(font, "WHITE WINS!", 0.45f, -0.095f, 191.0f / 255.0f, 127.0f / 255.0f, 63.0f / 255.0f, 1.0f);
+
+			//	Show the animated white flag!
+			for (unsigned int i = 0; i < animatedWflags.size(); i++) {
+				animatedWflags[i]->Render();
+			}
 		}
 		else if (gameover == GAMEOVER_BLACKWINS) { // Black won!
 			glLoadIdentity();
 			glTranslatef(-1.75f, +0.5f, 0.0f);
 			Text(font, "BLACK WINS!", 0.45f, -0.095f, 191.0f / 255.0f, 127.0f / 255.0f, 63.0f / 255.0f, 1.0f);
+
+			//	Show the animated black flag!
+			for (unsigned int i = 0; i < animatedBflags.size(); i++) {
+				animatedBflags[i]->Render();
+			}
 		}
 
 		//	The button text will be "Go to Main Menu"
@@ -278,6 +366,107 @@ void Fanorona::Render() {
 		Text(font, "Go to Main Menu", 0.185f, -0.095f, 191.0f / 255.0f, 127.0f / 255.0f, 63.0f / 255.0f, 1.0f);
 
 	} // above is Render() : gamestate == STATE_GAMEOVER 
+
+	else if (gamestate == STATE_GAMERULES1) {
+		//	Render the right button (for changing to STATE_GAMERULES2)
+		mainmenu[0]->Render();
+		mainmenu[9]->Render();
+
+		//	Render the text for the rulebook
+		glLoadIdentity();
+		glTranslatef(-0.2f, 1.8f, 0.0f);
+		Text(font, "Rules", 0.22f, -0.095f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-1.9f, 1.5f, 0.0f);
+		Text(font, "1.You must capture enemies if you can.", 0.20f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-1.9f, 1.2f, 0.0f);
+		Text(font, "2.There are two types of capture moves:", 0.20f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-1.65f, 0.9f, 0.0f);
+		Text(font, "Approach Capture:", 0.20f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-1.4f, 0.6f, 0.0f);
+		Text(font, "Move toward the enemy", 0.20f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-1.65f, 0.3f, 0.0f);
+		Text(font, "Withdraw Capture:", 0.20f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-1.4f, 0.0f, 0.0f);
+		Text(font, "Move away from the enemy", 0.20f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-1.9f, -0.3f, 0.0f);
+		Text(font, "3.A piece may move freely if no", 0.20f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-1.65f, -0.6f, 0.0f);
+		Text(font, "friendly pieces can capture. This", 0.20f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-1.65f, -0.9f, 0.0f);
+		Text(font, "is called a \"Paika\" move.", 0.20f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-1.9f, -1.2f, 0.0f);
+		Text(font, "4. White ALWAYS goes first.", 0.20f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		// Button Text
+		glLoadIdentity();
+		glTranslatef(1.2f, -1.8f, 0.0f);
+		Text(font, "Next Page", 0.18f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+	} // above is Render() : gamestate == STATE_GAMERULES1
+
+	else if (gamestate == STATE_GAMERULES2) {
+		//	Render the left and right buttons
+		mainmenu[0]->Render();
+		mainmenu[9]->Render();
+		mainmenu[10]->Render();
+
+		glLoadIdentity();
+		glTranslatef(-1.0f, 1.8f, 0.0f);
+		Text(font, "Playing the Game", 0.22f, -0.095f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-1.9f, 1.5f, 0.0f);
+		Text(font, "1.Use the mouse to click on a friendly", 0.20f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-1.65f, 1.2f, 0.0f);
+		Text(font, "piece to move", 0.20f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-1.9f, 0.9f, 0.0f);
+		Text(font, "2.Click on the enemy piece to capture", 0.20f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-1.65f, 0.6f, 0.0f);
+		Text(font, "Or click the position to Paika to", 0.20f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-1.5f, -0.3f, 0.0f);
+		Text(font, "This game is LOCAL MULTIPLAYER", 0.20f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(-1.85f, -0.6f, 0.0f);
+		Text(font, "Both players must share the same mouse", 0.20f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		// Text for Buttons
+		glLoadIdentity();
+		glTranslatef(-1.8f, -1.8f, 0.0f);
+		Text(font, "Previous Page", 0.18f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glLoadIdentity();
+		glTranslatef(1.2f, -1.8f, 0.0f);
+		Text(font, "Main Menu", 0.18f, -0.0999f, 1.0f, 1.0f, 1.0f, 1.0f);
+	}
 
 	SDL_GL_SwapWindow(displayWindow);
 }
@@ -298,6 +487,20 @@ void Fanorona::Update(float elapsed) {
 		Mix_VolumeMusic(volume);
 		updatevolume = false;
 	}
+
+	//	Update Animations
+	for (unsigned int i = 0; i < possibleATTACKS.size(); i++) {
+		possibleATTACKS[i]->Update(elapsed);
+	}
+
+	//	Only update flag animations if it's the gameover state
+	if (gamestate == STATE_GAMEOVER){
+		//	Update both flags it doesn't matter since just one will be shown on the screen
+		for (unsigned int i = 0; i < animatedBflags.size(); i++) {
+			animatedBflags[i]->Update(elapsed);
+			animatedWflags[i]->Update(elapsed);
+		}
+	}
 }
 
 /*	Game loop
@@ -315,8 +518,23 @@ bool Fanorona::UpdateAndRender() {
 	while (SDL_PollEvent(&event)) {
 		//	Check whether the close button for the game has been pressed -- if so, end the game
 		//	The shortcut to close the game is hit "ESC" on the keyboard
-		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || event.button.button == SDL_SCANCODE_ESCAPE) {
+		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
 			done = true;
+		}
+		//	Pressing ESC should open up a menu only if it's during one of the gameplay states
+		else if (event.button.button == SDL_SCANCODE_ESCAPE) {
+			if ((gamestate == STATE_WHITEPLAYER || gamestate == STATE_BLACKPLAYER) && (gamemenu == MENU_OFF)) {
+				//	Set gamemenu to be ON
+				gamemenu = MENU_ON;
+
+				//	Display menu elements
+
+				if (LOG_MENUS && LOG_MASTER) {
+					cout << "LOG Menu:\tON" << endl;
+				}
+//=================================================================
+
+			}
 		}
 		//	Check whether there has been mouse movement -- if there was movement then update the position variables
 		else if (event.type == SDL_MOUSEMOTION) {
@@ -338,6 +556,8 @@ bool Fanorona::UpdateAndRender() {
 
 				// Board Settings : 3x3 -> 5x5 -> 7x7
 				if (mouseX >= 0.360 && mouseX <= 1.835 && mouseY >= 0.827 && mouseY <= 1.187) {
+					Mix_PlayChannel(-1, button_sound, 0);
+
 					if (is3x3board) {
 						is3x3board = false;
 						is7x7board = false;
@@ -365,29 +585,23 @@ bool Fanorona::UpdateAndRender() {
 					}
 				}
 
-				/* Team Settings : White <-> Black
+				//=== Game Rules Button
 				if (mouseX >= 0.360 && mouseX <= 1.835 && mouseY >= 0.293 && mouseY <= 0.640) {
-					if (playerisWhite) {
-						playerisWhite = false;
-					}
-					else {
-						playerisWhite = true;
-					}
+					Mix_PlayChannel(-1, button_sound, 0);
+
+					gamestate = STATE_GAMERULES1;
 
 					//	Console trace for player team change
 					if (LOG_MASTER && LOG_TRACEMOUSEDOWN) {
-						if (playerisWhite) {
-							cout << "LOG Player is:\t\tWhite" << endl;
-						}
-						else {
-							cout << "LOG Player is:\t\tBlack" << endl;
-						}
+						cout << "LOG Game Rules:\t\tClicked" << endl;
 					}
 				}
 				//===*/
 
 				// Music Settings : Track (-)
 				if (mouseX >= 0.360 && mouseX <= 0.530 && mouseY >= -0.573 && mouseY <= -0.420) {
+					Mix_PlayChannel(-1, button_sound, 0);
+
 					if (tracknumber > 0) {
 						tracknumber -= 1;
 						updatemusic = true;
@@ -401,6 +615,8 @@ bool Fanorona::UpdateAndRender() {
 
 				// Music Settings : Track (+)
 				if (mouseX >= 1.670 && mouseX <= 1.835 && mouseY >= -0.573 && mouseY <= -0.420) {
+					Mix_PlayChannel(-1, button_sound, 0);
+
 					if (tracknumber < (gameMusic.size() - 1)) {
 						tracknumber += 1;
 						updatemusic = true;
@@ -414,6 +630,8 @@ bool Fanorona::UpdateAndRender() {
 
 				// Volume Settings : Volume (-)
 				if (mouseX >= 0.915 && mouseX <= 1.080 && mouseY >= -0.973 && mouseY <= -0.820) {
+					Mix_PlayChannel(-1, button_sound, 0);
+
 					if (volume > 0) {
 						volume -= 25;
 						updatevolume = true;
@@ -427,6 +645,8 @@ bool Fanorona::UpdateAndRender() {
 
 				// Volume Settings : Volume (+)
 				if (mouseX >= 1.655 && mouseX <= 1.820 && mouseY >= -0.973 && mouseY <= -0.820) {
+					Mix_PlayChannel(-1, button_sound, 0);
+
 					if (volume < 100) {
 						volume += 25;
 						updatevolume = true;
@@ -440,6 +660,7 @@ bool Fanorona::UpdateAndRender() {
 
 				// Start Game Button 
 				if (mouseX >= 0.360 && mouseX <= 1.835 && mouseY >= -1.793 && mouseY <= -1.420) {
+					Mix_PlayChannel(-1, button_sound, 0);
 
 					//	Set up the board based on the variable : is3x3board
 					if (is3x3board) {
@@ -582,7 +803,7 @@ bool Fanorona::UpdateAndRender() {
 					isplayerTurn = true;
 				}
 
-				//=== TESTING SETTING
+				//=== TESTING SETTING for HUMAN VS HUMAN
 				isplayerTurn = true;
 				//===*/
 
@@ -643,6 +864,9 @@ bool Fanorona::UpdateAndRender() {
 										currentchips[i]->approachULEFT || currentchips[i]->approachURIGHT || currentchips[i]->approachBLEFT || currentchips[i]->approachBRIGHT) {
 										validPiece = true;
 										cout << "\nThe selected piece is valid for a capturing move.\nPlease select the enemy piece to capture." << endl;
+
+										//	Give sword animations on the pieces that can be attacked
+										populatePossibleAttacks(currentchips[i]);
 									}
 									else {	//	If the piece is NOT valid (cannot capture in any way), check if paika should be allowed
 										if (paikaCheck()) {
@@ -658,6 +882,8 @@ bool Fanorona::UpdateAndRender() {
 								}
 							}
 						}
+
+
 					}
 				}
 				else if (isplayerTurn && validPiece) {
@@ -712,9 +938,33 @@ bool Fanorona::UpdateAndRender() {
 
 			} // above is gamestate == STATE_GAMEOVER
 
+			else if (gamestate == STATE_GAMERULES1) {
+				// There is just one button on this screen and it's to go to the next screen
+				if (mouseX >= 1.290 && mouseX <= 1.720 && mouseY >= -1.673 && mouseY <= -1.293) {
+					Mix_PlayChannel(-1, button_sound, 0);
+					gamestate = STATE_GAMERULES2;
+				}
+			}
+//==================================================================
+			else if (gamestate == STATE_GAMERULES2) {
+				// There are two buttons on this screen : Left / Right
+
+				// The Left button leads back to STATE_GAMERULES1
+				if (mouseX >= -1.710 && mouseX <= -1.300 && mouseY >= -1.693 && mouseY <= -1.307) {
+					Mix_PlayChannel(-1, button_sound, 0);
+					gamestate = STATE_GAMERULES1;
+				}
+
+				// The Right button leads back to STATE_MAINMENU
+				if (mouseX >= 1.290 && mouseX <= 1.720 && mouseY >= -1.673 && mouseY <= -1.293) {
+					Mix_PlayChannel(-1, button_sound, 0);
+					gamestate = STATE_MAINMENU;
+				}
+			}
+
 		} // above is event.type == SDL_MOUSEBUTTONDOWN
 
-		else if (event.type == SDL_MOUSEBUTTONUP) { // This is just used for button animation purposes
+		else if (event.type == SDL_MOUSEBUTTONUP) { // This is just used for button animation purposes on buttons 
 			
 		}
 	}
@@ -740,6 +990,171 @@ bool Fanorona::UpdateAndRender() {
 	return done;
 }
 
+/*	This is used for helper animations so players have an easier time seeing moves
+*/
+void Fanorona::populatePossibleAttacks(Chip* chip) {
+	possibleATTACKS.clear();
+
+	int enemyCol;
+	int enemyRow;
+
+	float PLIMIT = 270.0f;
+	float NLIMIT = 180.0f;
+	float new_scale = 1.5;
+	SheetSprite attackSprite = SheetSprite(ui_texture, 338.0f / 512.0f, 294.0f / 512.0f, 34.0f / 512.0f, 37.0f / 512.0f);
+
+	//Chip* chip = new Chip(blacksprite, i, 1, is3x3board, is7x7board, false);
+	
+	//	Look at what moves are available and place flags at those locations
+	if (chip->withdrawUP) {
+		// What is the enemy location?
+		enemyCol = chip->boardCol;
+		enemyRow = chip->boardRow + 1;
+		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+		chip->rotationPLIMIT = PLIMIT;
+		chip->rotationNLIMIT = NLIMIT;
+		chip->scale = new_scale;
+		possibleATTACKS.push_back(chip);
+	}
+	if (chip->withdrawDOWN) {
+		enemyCol = chip->boardCol;
+		enemyRow = chip->boardRow - 1;
+		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+		chip->rotationPLIMIT = PLIMIT;
+		chip->rotationNLIMIT = NLIMIT;
+		chip->scale = new_scale;
+		possibleATTACKS.push_back(chip);
+	}
+	if (chip->withdrawLEFT) {
+		enemyCol = chip->boardCol + 1;
+		enemyRow = chip->boardRow;
+		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+		chip->rotationPLIMIT = PLIMIT;
+		chip->rotationNLIMIT = NLIMIT;
+		chip->scale = new_scale;
+		possibleATTACKS.push_back(chip);
+	}
+	if (chip->withdrawRIGHT) {
+		enemyCol = chip->boardCol - 1;
+		enemyRow = chip->boardRow;
+		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+		chip->rotationPLIMIT = PLIMIT;
+		chip->rotationNLIMIT = NLIMIT;
+		chip->scale = new_scale;
+		possibleATTACKS.push_back(chip);
+	}
+	if (chip->withdrawULEFT) {
+		enemyCol = chip->boardCol + 1;
+		enemyRow = chip->boardRow + 1;
+		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+		chip->rotationPLIMIT = PLIMIT;
+		chip->rotationNLIMIT = NLIMIT;
+		chip->scale = new_scale;
+		possibleATTACKS.push_back(chip);
+	}
+	if (chip->withdrawURIGHT) {
+		enemyCol = chip->boardCol - 1;
+		enemyRow = chip->boardRow + 1;
+		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+		chip->rotationPLIMIT = PLIMIT;
+		chip->rotationNLIMIT = NLIMIT;
+		chip->scale = new_scale;
+		possibleATTACKS.push_back(chip);
+
+	}
+	if (chip->withdrawBLEFT) {
+		enemyCol = chip->boardCol + 1;
+		enemyRow = chip->boardRow - 1;
+		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+		chip->rotationPLIMIT = PLIMIT;
+		chip->rotationNLIMIT = NLIMIT;
+		chip->scale = new_scale;
+		possibleATTACKS.push_back(chip);
+	}
+	if (chip->withdrawBRIGHT) {
+		enemyCol = chip->boardCol - 1;
+		enemyRow = chip->boardRow - 1;
+		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+		chip->rotationPLIMIT = PLIMIT;
+		chip->rotationNLIMIT = NLIMIT;
+		chip->scale = new_scale;
+		possibleATTACKS.push_back(chip);
+	}
+
+	if (chip->approachUP) {
+		enemyCol = chip->boardCol;
+		enemyRow = chip->boardRow - 2;
+		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+		chip->rotationPLIMIT = PLIMIT;
+		chip->rotationNLIMIT = NLIMIT;
+		chip->scale = new_scale;
+		possibleATTACKS.push_back(chip);
+	}
+	if (chip->approachDOWN) {
+		enemyCol = chip->boardCol;
+		enemyRow = chip->boardRow + 2;
+		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+		chip->rotationPLIMIT = PLIMIT;
+		chip->rotationNLIMIT = NLIMIT;
+		chip->scale = new_scale;
+		possibleATTACKS.push_back(chip);
+	}
+	if (chip->approachLEFT) {
+		enemyCol = chip->boardCol - 2;
+		enemyRow = chip->boardRow;
+		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+		chip->rotationPLIMIT = PLIMIT;
+		chip->rotationNLIMIT = NLIMIT;
+		chip->scale = new_scale;
+		possibleATTACKS.push_back(chip);
+	}
+	if (chip->approachRIGHT) {
+		enemyCol = chip->boardCol + 2;
+		enemyRow = chip->boardRow;
+		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+		chip->rotationPLIMIT = PLIMIT;
+		chip->rotationNLIMIT = NLIMIT;
+		chip->scale = new_scale;
+		possibleATTACKS.push_back(chip);
+	}
+	if (chip->approachULEFT) {
+		enemyCol = chip->boardCol - 2;
+		enemyRow = chip->boardRow - 2;
+		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+		chip->rotationPLIMIT = PLIMIT;
+		chip->rotationNLIMIT = NLIMIT;
+		chip->scale = new_scale;
+		possibleATTACKS.push_back(chip);
+	}
+	if (chip->approachURIGHT) {
+		enemyCol = chip->boardCol + 2;
+		enemyRow = chip->boardRow - 2;
+		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+		chip->rotationPLIMIT = PLIMIT;
+		chip->rotationNLIMIT = NLIMIT;
+		chip->scale = new_scale;
+		possibleATTACKS.push_back(chip);
+	}
+	if (chip->approachBLEFT) {
+		enemyCol = chip->boardCol - 2;
+		enemyRow = chip->boardRow + 2;
+		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+		chip->rotationPLIMIT = PLIMIT;
+		chip->rotationNLIMIT = NLIMIT;
+		chip->scale = new_scale;
+		possibleATTACKS.push_back(chip);
+	}
+	if (chip->approachBRIGHT) {
+		enemyCol = chip->boardCol + 2;
+		enemyRow = chip->boardRow + 2;
+		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+		chip->rotationPLIMIT = PLIMIT;
+		chip->rotationNLIMIT = NLIMIT;
+		chip->scale = new_scale;
+		possibleATTACKS.push_back(chip);
+	}
+}
+
 /*	This function will end the turn (by changing the gamestate) 
 	It can also be modified to allow for consecutive captures
 */
@@ -750,8 +1165,11 @@ void Fanorona::endTurn(){
 	validPieceRow = 0;
 	targetCol = 0;
 	targetRow = 0;
+	possibleATTACKS.clear();
 
 	attacktype = ATK_NULL;
+
+	Mix_PlayChannel(-1, chipMove_sound, 0);
 
 	// Check if the game is over
 	if (gamestate == STATE_WHITEPLAYER) {
@@ -845,8 +1263,13 @@ void Fanorona::processCapture(){
 					targetRow += 1;
 				}
 			}
-			else { // This is the 5x5 board
+			else if (!is3x3board && !is7x7board) { // This is the 5x5 board
 				if (targetRow < 5) {
+					targetRow += 1;
+				}
+			}
+			else { // This is the 7x7 board
+				if (targetRow < 7) {
 					targetRow += 1;
 				}
 			}
@@ -864,8 +1287,13 @@ void Fanorona::processCapture(){
 					targetCol += 1;
 				}
 			}
-			else { // 5x5 Board
+			else if (!is3x3board && !is7x7board) { // 5x5 Board
 				if (targetCol < 5) {
+					targetCol += 1;
+				}
+			}
+			else { // 7x7 Board
+				if (targetCol < 7) {
 					targetCol += 1;
 				}
 			}
@@ -878,8 +1306,14 @@ void Fanorona::processCapture(){
 					targetRow += 1;
 				}
 			}
-			else { // This is the 5x5 board
+			else if (!is3x3board && !is7x7board) { // This is the 5x5 board
 				if (targetCol < 5 && targetRow < 5) {
+					targetCol += 1;
+					targetRow += 1;
+				}
+			}
+			else { // 7x7 board
+				if (targetCol < 7 && targetRow < 7) {
 					targetCol += 1;
 					targetRow += 1;
 				}
@@ -893,8 +1327,14 @@ void Fanorona::processCapture(){
 					targetRow += 1;
 				}
 			}
-			else { // 5x5 Board
+			else if (!is3x3board && !is7x7board) { // 5x5 Board
 				if (targetCol > 1 && targetRow < 5) {
+					targetCol -= 1;
+					targetRow += 1;
+				}
+			}
+			else { // 7x7 Board
+				if (targetCol > 1 && targetRow < 7) {
 					targetCol -= 1;
 					targetRow += 1;
 				}
@@ -908,8 +1348,14 @@ void Fanorona::processCapture(){
 					targetRow -= 1;
 				}
 			}
-			else {
+			else if (!is3x3board && !is7x7board) { // 5x5 Board
 				if (targetCol < 5 && targetRow > 1) {
+					targetCol += 1;
+					targetRow -= 1;
+				}
+			}
+			else { // 7x7 Board
+				if (targetCol < 7 && targetRow > 1) {
 					targetCol += 1;
 					targetRow -= 1;
 				}
@@ -1316,12 +1762,21 @@ int Fanorona::MouseToBoardRow(float mouseY) {
 		else if (mouseY >= -0.280 && mouseY <= 0.313)	{ Row = 2; }
 		else if (mouseY >= -1.593 && mouseY <= -1.027)	{ Row = 3; }
 	}
-	else { // 5x5 Board
+	else if (!is3x3board && !is7x7board) { // 5x5 Board
 		if (mouseY >= 1.400 && mouseY <= 1.967)			{ Row = 1; }
 		else if (mouseY >= 0.560 && mouseY <= 1.133)	{ Row = 2; }
 		else if (mouseY >= -0.273 && mouseY <= 0.300)	{ Row = 3; }
 		else if (mouseY >= -1.113 && mouseY <= -0.540)	{ Row = 4; }
 		else if (mouseY >= -1.947 && mouseY <= -1.380)	{ Row = 5; }
+	}
+	else {	// 7x7 Board
+		if (mouseY >= 1.440 && mouseY <= 1.880)			{ Row = 1; }
+		else if (mouseY >= 0.900 && mouseY <= 1.320)	{ Row = 2; }
+		else if (mouseY >= 0.347 && mouseY <= 0.773)	{ Row = 3; }
+		else if (mouseY >= -0.200 && mouseY <= 0.220)	{ Row = 4; }
+		else if (mouseY >= -0.760 && mouseY <= -0.333)	{ Row = 5; }
+		else if (mouseY >= -1.307 && mouseY <= -0.880)	{ Row = 6; }
+		else if (mouseY >= -1.860 && mouseY <= -1.427)	{ Row = 7; }
 	}
 	return Row;
 }
@@ -1335,12 +1790,21 @@ int Fanorona::MouseToBoardCol(float mouseX) {
 		else if (mouseX >= -0.285 && mouseX <= 0.285)	{ Col = 2; }
 		else if (mouseX >= 1.020 && mouseX <= 1.600)	{ Col = 3; }
 	}
-	else { // 5x5 Board
+	else if (!is3x3board && !is7x7board) { // 5x5 Board
 		if (mouseX >= -1.970 && mouseX <= -1.385)		{ Col = 1; }
 		else if (mouseX >= -1.135 && mouseX <= -0.545)	{ Col = 2; }
 		else if (mouseX >= -0.300 && mouseX <= 0.295)	{ Col = 3; }
 		else if (mouseX >= 0.535 && mouseX <= 1.125)	{ Col = 4; }
 		else if (mouseX >= 1.370 && mouseX <= 1.955)	{ Col = 5; }
+	}
+	else {	// 7x7 Board
+		if (mouseX >= -1.865 && mouseX <= -1.440)		{ Col = 1; }
+		else if (mouseX >= -1.320 && mouseX <= -0.890)	{ Col = 2; }
+		else if (mouseX >= -0.765 && mouseX <= -0.340)	{ Col = 3; }
+		else if (mouseX >= -0.215 && mouseX <= 0.210)	{ Col = 4; }
+		else if (mouseX >= 0.330 && mouseX <= 0.760)	{ Col = 5; }
+		else if (mouseX >= 0.885 && mouseX <= 1.310)	{ Col = 6; }
+		else if (mouseX >= 1.435 && mouseX <= 1.860)	{ Col = 7; }
 	}
 	return Col;
 }
@@ -1412,8 +1876,9 @@ void Fanorona::populateChipMoves(Chip* chip, vector<Chip*> currentchips, bool is
 
 			// Sanity Check -- cannot withdrawdown if chip is on bottom of the board
 			if (chip->withdrawDOWN) {
-				if (is3x3board) { if (chipRow == 3)	{ chip->withdrawDOWN = false; }	}
-				else			{ if (chipRow == 5) { chip->withdrawDOWN = false; }	}
+				if (is3x3board)							{ if (chipRow == 3)	{ chip->withdrawDOWN = false; }	}
+				else if (!is3x3board && !is7x7board)	{ if (chipRow == 5) { chip->withdrawDOWN = false; } }
+				else									{ if (chipRow == 7) { chip->withdrawDOWN = false; }	}
 			}
 		}
 
@@ -1443,8 +1908,9 @@ void Fanorona::populateChipMoves(Chip* chip, vector<Chip*> currentchips, bool is
 
 			// Sanity check -- cannot withdraw right if chip is on the rightmost column of the board
 			if (chip->withdrawRIGHT) {
-				if (is3x3board)	{ if (chipCol == 3) { chip->withdrawRIGHT = false; } }
-				else			{ if (chipCol == 5) { chip->withdrawRIGHT = false; } }
+				if (is3x3board)							{ if (chipCol == 3) { chip->withdrawRIGHT = false; } }
+				else if (!is3x3board && !is7x7board)	{ if (chipCol == 5) { chip->withdrawRIGHT = false; } }
+				else									{ if (chipCol == 7) { chip->withdrawRIGHT = false; } }
 			}
 		}
 
@@ -1488,8 +1954,9 @@ void Fanorona::populateChipMoves(Chip* chip, vector<Chip*> currentchips, bool is
 
 			// Sanity Check -- cannot withdraw URIGHT if chip is on rightmost column of the board or the top-most row
 			if (chip->withdrawURIGHT)	{ 
-				if (is3x3board) { if (chipCol == 3 || chipRow == 1) { chip->withdrawURIGHT = false;	} }
-				else			{ if (chipCol == 5 || chipRow == 1) { chip->withdrawURIGHT = false; } }
+				if (is3x3board)							{ if (chipCol == 3 || chipRow == 1) { chip->withdrawURIGHT = false;	} }
+				else if (!is3x3board && !is7x7board)	{ if (chipCol == 5 || chipRow == 1) { chip->withdrawURIGHT = false; } }
+				else									{ if (chipCol == 7 || chipRow == 1) { chip->withdrawURIGHT = false; } }
 			}
 		}
 
@@ -1512,8 +1979,9 @@ void Fanorona::populateChipMoves(Chip* chip, vector<Chip*> currentchips, bool is
 
 			// Sanity Check -- cannot withdraw BLEFT if chip is on leftmost column of board or the bottom-most row
 			if (chip->withdrawBLEFT) { 
-				if (is3x3board)	{ if (chipCol == 1 || chipRow == 3) { chip->withdrawBLEFT = false; } }
-				else			{ if (chipCol == 1 || chipRow == 5) { chip->withdrawBLEFT = false; } }
+				if (is3x3board)							{ if (chipCol == 1 || chipRow == 3) { chip->withdrawBLEFT = false; } }
+				else if (!is3x3board && !is7x7board)	{ if (chipCol == 1 || chipRow == 5) { chip->withdrawBLEFT = false; } }
+				else									{ if (chipCol == 1 || chipRow == 7) { chip->withdrawBLEFT = false; } }
 			}
 		}
 
@@ -1536,8 +2004,9 @@ void Fanorona::populateChipMoves(Chip* chip, vector<Chip*> currentchips, bool is
 
 			// Sanity Check -- cannot withdraw BRIGHT if chip is on rightmost column of board or the bottom-most row
 			if (chip->withdrawBRIGHT) {
-				if (is3x3board)	{ if (chipCol == 3 || chipRow == 3) { chip->withdrawBRIGHT = false;	} }
-				else			{ if (chipCol == 5 || chipRow == 5) { chip->withdrawBRIGHT = false;	} }
+				if (is3x3board)							{ if (chipCol == 3 || chipRow == 3) { chip->withdrawBRIGHT = false;	} }
+				else if (!is3x3board && !is7x7board)	{ if (chipCol == 5 || chipRow == 5) { chip->withdrawBRIGHT = false; } }
+				else									{ if (chipCol == 7 || chipRow == 7) { chip->withdrawBRIGHT = false; } }
 			}
 		}
 

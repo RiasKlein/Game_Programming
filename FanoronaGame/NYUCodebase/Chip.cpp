@@ -4,8 +4,27 @@ Chip::Chip() {}
 Chip::Chip(SheetSprite sprite, int boardCol, int boardRow, bool is3x3board, bool is7x7board, bool isWhite) : 
 		sprite(sprite), boardCol(boardCol), boardRow(boardRow), is3x3board(is3x3board), is7x7board(is7x7board), isWhite(isWhite) {}
 
-void Chip::Update() {
+void Chip::Update(float elapsed) {
+	float speedup = 180.0f;
 
+	if (rotateUP) { // rotateUP cycle
+		if (rotation < rotationPLIMIT) {
+			rotation += elapsed * speedup;
+		}
+		else {
+			rotateUP = false;
+			rotation -= elapsed * speedup;
+		}
+	}
+	else { // rotateDOWN cycle
+		if (rotation > rotationNLIMIT) {
+			rotation -= elapsed * speedup;
+		}
+		else {
+			rotateUP = true;
+			rotation += elapsed * speedup;
+		}
+	}
 }
 
 void Chip::Render(){

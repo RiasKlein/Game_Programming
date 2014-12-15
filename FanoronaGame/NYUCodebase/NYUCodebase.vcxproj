@@ -76,6 +76,7 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Fanorona.cpp" />
+    <ClCompile Include="MovingText.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="SheetSprite.cpp" />
   </ItemGroup>
@@ -83,6 +84,7 @@
     <ClInclude Include="Chip.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Fanorona.h" />
+    <ClInclude Include="MovingText.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="SheetSprite.h" />
   </ItemGroup>
