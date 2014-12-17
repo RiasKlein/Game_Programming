@@ -1,45 +1,46 @@
 #include "MovingText.h"
 
 MovingText::MovingText() {}
-MovingText::MovingText(SheetSprite sprite, float initial_x, float initial_y, float final_x, float scale, float timeToComplete, bool intermediateStop) :
-			sprite(sprite), initial_x(initial_x), initial_y(initial_y), final_x(final_x), scale(scale), timeToComplete(timeToComplete), intermediateStop(intermediateStop) {}
+MovingText::MovingText(SheetSprite sprite, float initial_x, float initial_y, float final_x, float scale, float timeToComplete) :
+			sprite(sprite), initial_x(initial_x), initial_y(initial_y), final_x(final_x), scale(scale), timeToComplete(timeToComplete) {}
 
 //	This function will update the values of this object
 void MovingText::Update(float elapsed){
 	// Things should only be happening if we want to animate
 
 	if (animate) {
-		//	Is there an intermediate stop and if so did we complete the stop yet?
-		if (intermediateStop && !intermediateComplete) {
-			// Did we pass the intermediate stop location?
-			if (final_x > initial_x) { // We are heading ->
-				if (x >= intermediate_x) { // We passed / is at the intermediate spot!
-					intermediateTimeOut += elapsed;
-				}
+		float speed = (final_x - initial_x) / timeToComplete;
+
+		if (final_x >= initial_x) { // Heading ->
+			if (x < final_x) {
+				x += speed * elapsed;
 			}
-			if (final_x < initial_x) { // We are heading <-
-				if (x <= intermediate_x) {
-					intermediateTimeOut += elapsed;
+			else {
+				arrived = true;
+
+				if (displayTime > 0.0f) {
+					timeUpSoFar += elapsed;
 				}
 			}
 
 		}
-		else {
-			//	Update our position
-			if (final_x > initial_x) { // We are heading ->
-				float speed = (final_x - initial_x) / timeToComplete;
-				x += elapsed * speed;
+
+		if (final_x <= initial_x) { // Heading <-
+			if (x > final_x) {
+				x += speed * elapsed;
 			}
-			else {	// We are heading <-
-				float speed = (initial_x - final_x) / timeToComplete;
-				x -= elapsed * speed;
+			else {
+				arrived = true;
+
+				if (displayTime > 0.0f) {
+					timeUpSoFar += elapsed;
+				}
 			}
 		}
 
-		//	Are we out of our intermediate stop yet?
-		if (intermediateStop) {
-			if (intermediateTimeOut >= intermediateDuration) {
-				intermediateComplete = true;
+		if (displayTime > 0.0f) {
+			if (timeUpSoFar >= displayTime) {
+				Reset();
 			}
 		}
 	}
@@ -55,13 +56,8 @@ void MovingText::Render(){
 void MovingText::Reset(){
 	x = initial_x;
 	y = initial_y;
-	
-	if (intermediateStop) {
-		intermediateComplete = false;
-	}
-	else {
-		intermediateComplete = true;
-	}
 
-	intermediateTimeOut = 0.0f;
+	animate = false;
+	arrived = false;
+	timeUpSoFar = 0.0f;
 }

@@ -16,20 +16,20 @@ public:
 	float x = 0.0f;
 	float y = 0.0f;
 	float scale = 0.6f;
-	float rotation = 180.0f;
+	float rotation = 330.0f;
 	bool flipped = false;
 
 	//	For animations
-	float rotationPLIMIT = 0.0f;		// Used for animations
-	float rotationNLIMIT = 0.0f;		// Used for animations
-	bool rotateUP = true;
+	float rotationPLIMIT = 0.0f;		//	Used for animations
+	float rotationNLIMIT = 0.0f;		//	Used for animations
+	bool rotateUP = true;				//	Used for animations
 	
-	int boardCol;			//	The column that the chip is at (on the board)
-	int boardRow;			//	The row that the chip is at (on the board)
+	int boardCol;						//	The column that the chip is at (on the board)
+	int boardRow;						//	The row that the chip is at (on the board)
 
-	bool is7x7board;
-	bool is3x3board;
-	bool isWhite;
+	bool is7x7board;					//	Whether or not the gameboard is a 7x7 Board
+	bool is3x3board;					//	Whether or not the gameboard is a 3x3 Board
+	bool isWhite;						//	Whether the chip is White (or not)
 
 	//	Withdraw Moves
 	bool withdrawUP = false;

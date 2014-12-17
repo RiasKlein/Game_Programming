@@ -38,16 +38,20 @@ Fanorona::Fanorona() {
 	cout << "============================================================\n\tProject Fanorona - Fall 2014 by Shunman Tse\n============================================================\n" << endl;
 
 	//	Print out in Console which Logging Tools are active
-	if (LOG_MASTER)			{ cout << "Logger Tools\t\t\t...\t\tActive" << endl; }
-	else					{ cout << "Logger Tools\t\t\t...\t\tInactive" << endl; }
-	if (LOG_TRACEMOUSEDOWN)	{ cout << "Mouse Click Tracing\t\t...\t\tActive" << endl; }
-	else					{ cout << "Mouse Click Tracing\t\t...\t\tInactive" << endl; }
-	if (LOG_MUSIC)			{ cout << "Music Tracing\t\t\t...\t\tActive" << endl; }
-	else					{ cout << "Music Tracing\t\t\t...\t\tInactive" << endl; }
-	if (LOG_CHIPSSIZE)		{ cout << "Chip Size Tracing\t\t...\t\tActive" << endl; }
-	else					{ cout << "Chip Size Tracing\t\t...\t\tInactive" << endl; }
-	if (LOG_CLICKEDCHIP)	{ cout << "Chip Click Tracing\t\t...\t\tActive" << endl; }
-	else					{ cout << "Chip Click Tracing\t\t...\t\tInactive" << endl; }
+	if (LOG_MASTER) {
+		if (LOG_TRACEMOUSEDOWN)		{ cout << "Mouse Click Tracing\t\t...\t\tActive" << endl; }
+		else						{ cout << "Mouse Click Tracing\t\t...\t\tInactive" << endl; }
+		if (LOG_MUSIC)				{ cout << "Music Tracing\t\t\t...\t\tActive" << endl; }
+		else						{ cout << "Music Tracing\t\t\t...\t\tInactive" << endl; }
+		if (LOG_CHIPSSIZE)			{ cout << "Chip Size Tracing\t\t...\t\tActive" << endl; }
+		else						{ cout << "Chip Size Tracing\t\t...\t\tInactive" << endl; }
+		if (LOG_CLICKEDCHIP)		{ cout << "Chip Click Tracing\t\t...\t\tActive" << endl; }
+		else						{ cout << "Chip Click Tracing\t\t...\t\tInactive" << endl; }
+		if (LOG_POPULATECHIPMOVES)	{ cout << "Chip Moves Tracing\t\t...\t\tActive" << endl; }
+		else						{ cout << "Chip Moves Tracing\t\t...\t\tInactive" << endl; }
+		if (LOG_MENUS)				{ cout << "Menu Tracing\t\t\t...\t\tActive" << endl; }
+		else						{ cout << "Menu Tracing\t\t\t...\t\tInactive" << endl; }
+	}
 	cout << endl;
 
 	Init();
@@ -162,8 +166,10 @@ void Fanorona::Init() {
 	SheetSprite whiteflag13 = SheetSprite(flags_texture, 56.0f / 416.0f, 0.0f, 53.0f / 416.0f, 112.0f / 416.0f);
 
 	Entity* leftWhiteFlag = new Entity(whiteflag05, -1.4f, -0.5f, 2.0f);
+	Entity* middleWhiteFlag = new Entity(whiteflag05, 0.0f, -0.5f, 2.0f);
 	Entity* rightWhiteFlag = new Entity(whiteflag05, 1.4f, -0.5f, 2.0f);
 	animatedWflags.push_back(leftWhiteFlag);
+	animatedWflags.push_back(middleWhiteFlag);
 	animatedWflags.push_back(rightWhiteFlag);
 	
 	for (unsigned int i = 0; i < animatedWflags.size(); i++) {
@@ -191,8 +197,10 @@ void Fanorona::Init() {
 	SheetSprite blackflag13 = SheetSprite(flags_texture, 110.0f / 416.0f, 0.0f, 53.0f / 416.0f, 112.0f / 416.0f);
 
 	Entity* leftBlackFlag = new Entity(blackflag05, -1.4f, -0.5f, 2.0f);
+	Entity* middleBlackFlag = new Entity(blackflag05, 0.0f, -0.5f, 2.0f);
 	Entity* rightBlackFlag = new Entity(blackflag05, 1.4f, -0.5f, 2.0f);
 	animatedBflags.push_back(leftBlackFlag);
+	animatedBflags.push_back(middleBlackFlag);
 	animatedBflags.push_back(rightBlackFlag);
 
 	for (unsigned int i = 0; i < animatedBflags.size(); i++) {
@@ -209,10 +217,43 @@ void Fanorona::Init() {
 	}
 
 	//======================================================================================================================
-	//--- Set up Moving Text Objects
-	//		The flag animations will be used in the game over state for the winning team
+	//--- Set up the ESC menu
+	//		This contains the objects for the ESC menu
 	//======================================================================================================================
+	SheetSprite escmenu_texture = SheetSprite(movingtext_texture, 0.0f, 160.0f / 882.0f, 619.0f / 882.0f, 600.0f / 882.0f);
+	SheetSprite pausedgame_texture = SheetSprite(movingtext_texture, 620.0f / 882.0f, 160.0f / 882.0f, 261.0f / 882.0f, 150.0f / 882.0f);
 
+	MovingText* purpleBackground = new MovingText(escmenu_texture, 3.0f, -0.0f, 1.35f, 4.0f, 0.40f);
+	MovingText* pausedGameMessage = new MovingText(pausedgame_texture, 3.0f, -1.3f, -1.1f, 2.0f, 0.40f);
+	MovingText* escMenuLogo = new MovingText(logo_sprite, 3.0f, -0.5f, 0.9f, 2.0f, 0.5f);
+	escMenu.push_back(purpleBackground);
+	escMenu.push_back(pausedGameMessage);
+	escMenu.push_back(escMenuLogo);
+
+	//======================================================================================================================
+	//--- Set up moving screen messages
+	//		These objects will tell players who's turn it is and whether someone has won the game!
+	//======================================================================================================================
+	SheetSprite whiteTurnTexture = SheetSprite(movingtext_texture, 0.0f, 0.0f, 728.0f / 882.0f, 79.0f / 882.0f);
+	SheetSprite blackTurnTexture = SheetSprite(movingtext_texture, 0.0f, 80.0f / 882.0f, 717.0f / 882.0f, 79.0f / 882.0f);
+	SheetSprite whiteWinsTexture = SheetSprite(movingtext_texture, 0.0f, 761.0f / 882.0f, 444.0f / 882.0f, 68.0f / 882.0f);
+	SheetSprite blackWinsTexture = SheetSprite(movingtext_texture, 445.0f / 882.0f, 761.0f / 882.0f, 433.0f / 882.0f, 68.0f / 882.0f);
+
+	MovingText* whiteTurnText = new MovingText(whiteTurnTexture, 4.0f, 0.8f, 0.0f, 2.0f, 0.5f);
+	whiteTurnText->displayTime = 0.5f;
+	screenText.push_back(whiteTurnText);
+
+	MovingText* blackTurnText = new MovingText(blackTurnTexture, 4.0f, 0.8f, 0.0f, 2.0f, 0.5f);
+	blackTurnText->displayTime = 0.5f;
+	screenText.push_back(blackTurnText);
+
+	MovingText* whiteWinsText = new MovingText(whiteWinsTexture, 4.0f, 0.8f, -4.0f, 3.5f, 6.0f);
+	whiteWinsText->displayTime = 0.2f;
+	screenText.push_back(whiteWinsText);
+
+	MovingText* blackWinsText = new MovingText(blackWinsTexture, 4.0f, 0.8f, -4.0f, 3.5f, 6.0f);
+	blackWinsText->displayTime = 0.2f;
+	screenText.push_back(blackWinsText);
 }
 
 /*	~Fanorona()
@@ -323,9 +364,44 @@ void Fanorona::Render() {
 			currentchips[i]->Render();
 		}
 
-		//	Render the attack icons on the board
+		//	Render the attack icons on the board (for all 3 board modes)
 		for (unsigned int i = 0; i < possibleATTACKS.size(); i++) {
 			possibleATTACKS[i]->Render();
+		}
+
+		//	Render Paika help for just the 3x3 board
+		for (unsigned int i = 0; i < possiblePAIKA.size(); i++){
+			possiblePAIKA[i]->Render();
+		}
+
+		//	Render screenText if applicable
+		for (unsigned int i = 0; i < screenText.size(); i++) {
+			screenText[i]->Render();
+		}
+
+		//	If the game menu is ON, then render the ESC menu
+		if (gamemenu == MENU_ON) {
+			for (unsigned int i = 0; i < escMenu.size(); i++) {
+				escMenu[i]->Render();
+			}
+
+			if (escMenu[0]->arrived && escMenu[1]->arrived) {
+				mainmenu[2]->Render();
+				mainmenu[3]->Render();
+				mainmenu[8]->Render();
+
+				glLoadIdentity();
+				glTranslatef(0.47f, 1.03f, 0.0f);
+				Text(font, "Back to Game", 0.21f, -0.095f, 191.0f / 255.0f, 127.0f / 255.0f, 63.0f / 255.0f, 1.0f);
+
+				glLoadIdentity();
+				glTranslatef(0.60f, 0.48f, 0.0f);
+				Text(font, "Main Menu", 0.22f, -0.095f, 191.0f / 255.0f, 127.0f / 255.0f, 63.0f / 255.0f, 1.0f);
+
+				glLoadIdentity();
+				glTranslatef(0.60f, -1.6f, 0.0f);
+				Text(font, "Exit Game", 0.22f, -0.095f, 191.0f / 255.0f, 127.0f / 255.0f, 63.0f / 255.0f, 1.0f);
+			}
 		}
 
 	} // above is Render() : gamestate == STATE_WHITEPLAYER || gamestate == STATE_BLACKPLAYER
@@ -342,7 +418,9 @@ void Fanorona::Render() {
 		if (gameover == GAMEOVER_WHITEWINS) { // White won!
 			glLoadIdentity();
 			glTranslatef(-1.75f, +0.5f, 0.0f);
-			Text(font, "WHITE WINS!", 0.45f, -0.095f, 191.0f / 255.0f, 127.0f / 255.0f, 63.0f / 255.0f, 1.0f);
+			//Text(font, "WHITE WINS!", 0.45f, -0.095f, 191.0f / 255.0f, 127.0f / 255.0f, 63.0f / 255.0f, 1.0f);
+
+			screenText[SCREENTEXT_WHITEWINS]->Render();
 
 			//	Show the animated white flag!
 			for (unsigned int i = 0; i < animatedWflags.size(); i++) {
@@ -352,7 +430,9 @@ void Fanorona::Render() {
 		else if (gameover == GAMEOVER_BLACKWINS) { // Black won!
 			glLoadIdentity();
 			glTranslatef(-1.75f, +0.5f, 0.0f);
-			Text(font, "BLACK WINS!", 0.45f, -0.095f, 191.0f / 255.0f, 127.0f / 255.0f, 63.0f / 255.0f, 1.0f);
+			//Text(font, "BLACK WINS!", 0.45f, -0.095f, 191.0f / 255.0f, 127.0f / 255.0f, 63.0f / 255.0f, 1.0f);
+
+			screenText[SCREENTEXT_BLACKWINS]->Render();
 
 			//	Show the animated black flag!
 			for (unsigned int i = 0; i < animatedBflags.size(); i++) {
@@ -493,12 +573,34 @@ void Fanorona::Update(float elapsed) {
 		possibleATTACKS[i]->Update(elapsed);
 	}
 
+	for (unsigned int i = 0; i < possiblePAIKA.size(); i++) {
+		possiblePAIKA[i]->Update(elapsed);
+	}
+
+	for (unsigned int i = 0; i < screenText.size(); i++) {
+		screenText[i]->Update(elapsed);
+	}
+
 	//	Only update flag animations if it's the gameover state
 	if (gamestate == STATE_GAMEOVER){
 		//	Update both flags it doesn't matter since just one will be shown on the screen
 		for (unsigned int i = 0; i < animatedBflags.size(); i++) {
 			animatedBflags[i]->Update(elapsed);
 			animatedWflags[i]->Update(elapsed);
+		}
+
+		if (gameover == GAMEOVER_WHITEWINS) {
+			screenText[SCREENTEXT_WHITEWINS]->animate = true;
+		}
+		else if (gameover == GAMEOVER_BLACKWINS) {
+			screenText[SCREENTEXT_BLACKWINS]->animate = true;
+		}
+	}
+
+	//	Only update the esc menu if the game menu is ON
+	if (gamemenu == MENU_ON) {
+		for (unsigned int i = 0; i < escMenu.size(); i++) {
+			escMenu[i]->Update(elapsed);
 		}
 	}
 }
@@ -528,6 +630,10 @@ bool Fanorona::UpdateAndRender() {
 				gamemenu = MENU_ON;
 
 				//	Display menu elements
+				for (unsigned int i = 0; i < escMenu.size(); i++) {
+					escMenu[i]->Reset();
+					escMenu[i]->animate = true;
+				}
 
 				if (LOG_MENUS && LOG_MASTER) {
 					cout << "LOG Menu:\tON" << endl;
@@ -785,16 +891,24 @@ bool Fanorona::UpdateAndRender() {
 						}
 					}
 
+					//	Reset all of our screen Text before the game begins
+					for (unsigned int i = 0; i < screenText.size(); i++) {
+						screenText[i]->Reset();
+					}
+
 					//	Change the game state -- white player always goes first
 					gamestate = STATE_WHITEPLAYER;
+
+					//	ScreenText display that it's the white player's turn
+					screenText[SCREENTEXT_WHITETURN]->animate = true;
 
 					//	Console output to let the player know that it's White's turn -- white always goes first
 					cout << "\n=================== White Player's Turn ===================" << endl;
 				}
 			} // above is gamestate == STATE_MAINMENU
 
-			else if (gamestate == STATE_WHITEPLAYER || gamestate == STATE_BLACKPLAYER) {
-				//	If it's the player's turn, he/she should be allowed to make the move
+			else if ((gamestate == STATE_WHITEPLAYER || gamestate == STATE_BLACKPLAYER) && (gamemenu == MENU_OFF)) {
+				//	If it's the player's turn, he/she should be allowed to make the move -- ONLY if the menu overlay ISN'T OPEN
 				bool isplayerTurn = false;
 				if (playerisWhite && gamestate == STATE_WHITEPLAYER) {
 					isplayerTurn = true;
@@ -803,12 +917,11 @@ bool Fanorona::UpdateAndRender() {
 					isplayerTurn = true;
 				}
 
-				//=== TESTING SETTING for HUMAN VS HUMAN
+				//=== TURN ON THIS SETTING FOR HUMAN VS HUMAN
 				isplayerTurn = true;
 				//===*/
 
 				if (isplayerTurn && !validPiece) {
-					//	The player is white and have NOT yet selected a piece to move
 					validPieceCol = MouseToBoardCol(mouseX);
 					validPieceRow = MouseToBoardRow(mouseY);
 
@@ -926,7 +1039,46 @@ bool Fanorona::UpdateAndRender() {
 					}
 				}
 
-			} // above is gamestate == STATE_WHITEPLAYER || gamestate == STATE_BLACKPLAYER
+			} // above is gamestate == STATE_WHITEPLAYER || gamestate == STATE_BLACKPLAYER && gamemenu == MENU_OFF
+
+			else if (gamemenu == MENU_ON) {
+				//	Read for player input on one of the three buttons
+
+				//	Back to game button
+				if (mouseX >= 0.360 && mouseX <= 1.835 && mouseY >= 0.827 && mouseY <= 1.187) {
+					Mix_PlayChannel(-1, button_sound, 0);
+
+					gamemenu = MENU_OFF;
+
+					//	Reset display elements
+					for (unsigned int i = 0; i < escMenu.size(); i++) {
+						escMenu[i]->Reset();
+						escMenu[i]->animate = false;
+					}
+				}
+
+				//	Main Menu button
+				if (mouseX >= 0.360 && mouseX <= 1.835 && mouseY >= 0.293 && mouseY <= 0.640) {
+					Mix_PlayChannel(-1, button_sound, 0);
+					
+					gamemenu = MENU_OFF;
+
+					//	Reset display elements
+					for (unsigned int i = 0; i < escMenu.size(); i++) {
+						escMenu[i]->Reset();
+						escMenu[i]->animate = false;
+					}
+
+					gamestate = STATE_MAINMENU;
+				}
+
+				//	Exit Game button
+				if (mouseX >= 0.360 && mouseX <= 1.835 && mouseY >= -1.793 && mouseY <= -1.420) {
+					Mix_PlayChannel(-1, button_sound, 0);
+
+					done = true;
+				}
+			}
 
 			else if (gamestate == STATE_GAMEOVER) {
 				// On the game over gamestate we want to display the winner situation (who won or was it a draw?)
@@ -991,167 +1143,189 @@ bool Fanorona::UpdateAndRender() {
 }
 
 /*	This is used for helper animations so players have an easier time seeing moves
+	This allows players to see which pieces they can attack
+	UPDATE: The selected piece is now labeled as well.
 */
 void Fanorona::populatePossibleAttacks(Chip* chip) {
+	//======================================================================================================================
+	//--- Making possibleATTACKS
+	//		Shows available capture moves or at the very least show the chip that was pressed
+	//		3x3 board ONLY will show all the locations that the chip can PAIKA to
+	//======================================================================================================================
 	possibleATTACKS.clear();
 
 	int enemyCol;
 	int enemyRow;
-
+	/*=== SETTING 1
 	float PLIMIT = 270.0f;
 	float NLIMIT = 180.0f;
+	//===*/
+
+	//=== SETTING 2
+	float PLIMIT = 300.0f;
+	float NLIMIT = 240.0f;
+	//===*/
+
 	float new_scale = 1.5;
 	SheetSprite attackSprite = SheetSprite(ui_texture, 338.0f / 512.0f, 294.0f / 512.0f, 34.0f / 512.0f, 37.0f / 512.0f);
+	SheetSprite chosenSprite = SheetSprite(ui_texture, 90.0f / 512.0f, 482.0f / 512.0f, 27.0f / 512.0f, 28.0f / 512.0f);
 
-	//Chip* chip = new Chip(blacksprite, i, 1, is3x3board, is7x7board, false);
+	//	Add something to let the user know which piece has been selected!
+	Chip* hand = new Chip(chosenSprite, chip->boardCol, chip->boardRow, is3x3board, is7x7board, false);
+	hand->rotationPLIMIT = PLIMIT;
+	hand->rotationNLIMIT = NLIMIT;
+	hand->scale = new_scale;
+	possibleATTACKS.push_back(hand);
 	
-	//	Look at what moves are available and place flags at those locations
-	if (chip->withdrawUP) {
-		// What is the enemy location?
-		enemyCol = chip->boardCol;
-		enemyRow = chip->boardRow + 1;
-		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
-		chip->rotationPLIMIT = PLIMIT;
-		chip->rotationNLIMIT = NLIMIT;
-		chip->scale = new_scale;
-		possibleATTACKS.push_back(chip);
-	}
-	if (chip->withdrawDOWN) {
-		enemyCol = chip->boardCol;
-		enemyRow = chip->boardRow - 1;
-		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
-		chip->rotationPLIMIT = PLIMIT;
-		chip->rotationNLIMIT = NLIMIT;
-		chip->scale = new_scale;
-		possibleATTACKS.push_back(chip);
-	}
-	if (chip->withdrawLEFT) {
-		enemyCol = chip->boardCol + 1;
-		enemyRow = chip->boardRow;
-		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
-		chip->rotationPLIMIT = PLIMIT;
-		chip->rotationNLIMIT = NLIMIT;
-		chip->scale = new_scale;
-		possibleATTACKS.push_back(chip);
-	}
-	if (chip->withdrawRIGHT) {
-		enemyCol = chip->boardCol - 1;
-		enemyRow = chip->boardRow;
-		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
-		chip->rotationPLIMIT = PLIMIT;
-		chip->rotationNLIMIT = NLIMIT;
-		chip->scale = new_scale;
-		possibleATTACKS.push_back(chip);
-	}
-	if (chip->withdrawULEFT) {
-		enemyCol = chip->boardCol + 1;
-		enemyRow = chip->boardRow + 1;
-		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
-		chip->rotationPLIMIT = PLIMIT;
-		chip->rotationNLIMIT = NLIMIT;
-		chip->scale = new_scale;
-		possibleATTACKS.push_back(chip);
-	}
-	if (chip->withdrawURIGHT) {
-		enemyCol = chip->boardCol - 1;
-		enemyRow = chip->boardRow + 1;
-		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
-		chip->rotationPLIMIT = PLIMIT;
-		chip->rotationNLIMIT = NLIMIT;
-		chip->scale = new_scale;
-		possibleATTACKS.push_back(chip);
+	//	This added help feature only occurs if it's not the 7x7 board (3x3 or 5x5 will have it)
+	if (!is7x7board) {
+		if (chip->withdrawUP) {
+			// What is the enemy location?
+			enemyCol = chip->boardCol;
+			enemyRow = chip->boardRow + 1;
+			Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+			chip->rotationPLIMIT = PLIMIT;
+			chip->rotationNLIMIT = NLIMIT;
+			chip->scale = new_scale;
+			possibleATTACKS.push_back(chip);
+		}
+		if (chip->withdrawDOWN) {
+			enemyCol = chip->boardCol;
+			enemyRow = chip->boardRow - 1;
+			Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+			chip->rotationPLIMIT = PLIMIT;
+			chip->rotationNLIMIT = NLIMIT;
+			chip->scale = new_scale;
+			possibleATTACKS.push_back(chip);
+		}
+		if (chip->withdrawLEFT) {
+			enemyCol = chip->boardCol + 1;
+			enemyRow = chip->boardRow;
+			Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+			chip->rotationPLIMIT = PLIMIT;
+			chip->rotationNLIMIT = NLIMIT;
+			chip->scale = new_scale;
+			possibleATTACKS.push_back(chip);
+		}
+		if (chip->withdrawRIGHT) {
+			enemyCol = chip->boardCol - 1;
+			enemyRow = chip->boardRow;
+			Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+			chip->rotationPLIMIT = PLIMIT;
+			chip->rotationNLIMIT = NLIMIT;
+			chip->scale = new_scale;
+			possibleATTACKS.push_back(chip);
+		}
+		if (chip->withdrawULEFT) {
+			enemyCol = chip->boardCol + 1;
+			enemyRow = chip->boardRow + 1;
+			Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+			chip->rotationPLIMIT = PLIMIT;
+			chip->rotationNLIMIT = NLIMIT;
+			chip->scale = new_scale;
+			possibleATTACKS.push_back(chip);
+		}
+		if (chip->withdrawURIGHT) {
+			enemyCol = chip->boardCol - 1;
+			enemyRow = chip->boardRow + 1;
+			Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+			chip->rotationPLIMIT = PLIMIT;
+			chip->rotationNLIMIT = NLIMIT;
+			chip->scale = new_scale;
+			possibleATTACKS.push_back(chip);
 
-	}
-	if (chip->withdrawBLEFT) {
-		enemyCol = chip->boardCol + 1;
-		enemyRow = chip->boardRow - 1;
-		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
-		chip->rotationPLIMIT = PLIMIT;
-		chip->rotationNLIMIT = NLIMIT;
-		chip->scale = new_scale;
-		possibleATTACKS.push_back(chip);
-	}
-	if (chip->withdrawBRIGHT) {
-		enemyCol = chip->boardCol - 1;
-		enemyRow = chip->boardRow - 1;
-		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
-		chip->rotationPLIMIT = PLIMIT;
-		chip->rotationNLIMIT = NLIMIT;
-		chip->scale = new_scale;
-		possibleATTACKS.push_back(chip);
-	}
+		}
+		if (chip->withdrawBLEFT) {
+			enemyCol = chip->boardCol + 1;
+			enemyRow = chip->boardRow - 1;
+			Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+			chip->rotationPLIMIT = PLIMIT;
+			chip->rotationNLIMIT = NLIMIT;
+			chip->scale = new_scale;
+			possibleATTACKS.push_back(chip);
+		}
+		if (chip->withdrawBRIGHT) {
+			enemyCol = chip->boardCol - 1;
+			enemyRow = chip->boardRow - 1;
+			Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+			chip->rotationPLIMIT = PLIMIT;
+			chip->rotationNLIMIT = NLIMIT;
+			chip->scale = new_scale;
+			possibleATTACKS.push_back(chip);
+		}
 
-	if (chip->approachUP) {
-		enemyCol = chip->boardCol;
-		enemyRow = chip->boardRow - 2;
-		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
-		chip->rotationPLIMIT = PLIMIT;
-		chip->rotationNLIMIT = NLIMIT;
-		chip->scale = new_scale;
-		possibleATTACKS.push_back(chip);
-	}
-	if (chip->approachDOWN) {
-		enemyCol = chip->boardCol;
-		enemyRow = chip->boardRow + 2;
-		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
-		chip->rotationPLIMIT = PLIMIT;
-		chip->rotationNLIMIT = NLIMIT;
-		chip->scale = new_scale;
-		possibleATTACKS.push_back(chip);
-	}
-	if (chip->approachLEFT) {
-		enemyCol = chip->boardCol - 2;
-		enemyRow = chip->boardRow;
-		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
-		chip->rotationPLIMIT = PLIMIT;
-		chip->rotationNLIMIT = NLIMIT;
-		chip->scale = new_scale;
-		possibleATTACKS.push_back(chip);
-	}
-	if (chip->approachRIGHT) {
-		enemyCol = chip->boardCol + 2;
-		enemyRow = chip->boardRow;
-		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
-		chip->rotationPLIMIT = PLIMIT;
-		chip->rotationNLIMIT = NLIMIT;
-		chip->scale = new_scale;
-		possibleATTACKS.push_back(chip);
-	}
-	if (chip->approachULEFT) {
-		enemyCol = chip->boardCol - 2;
-		enemyRow = chip->boardRow - 2;
-		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
-		chip->rotationPLIMIT = PLIMIT;
-		chip->rotationNLIMIT = NLIMIT;
-		chip->scale = new_scale;
-		possibleATTACKS.push_back(chip);
-	}
-	if (chip->approachURIGHT) {
-		enemyCol = chip->boardCol + 2;
-		enemyRow = chip->boardRow - 2;
-		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
-		chip->rotationPLIMIT = PLIMIT;
-		chip->rotationNLIMIT = NLIMIT;
-		chip->scale = new_scale;
-		possibleATTACKS.push_back(chip);
-	}
-	if (chip->approachBLEFT) {
-		enemyCol = chip->boardCol - 2;
-		enemyRow = chip->boardRow + 2;
-		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
-		chip->rotationPLIMIT = PLIMIT;
-		chip->rotationNLIMIT = NLIMIT;
-		chip->scale = new_scale;
-		possibleATTACKS.push_back(chip);
-	}
-	if (chip->approachBRIGHT) {
-		enemyCol = chip->boardCol + 2;
-		enemyRow = chip->boardRow + 2;
-		Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
-		chip->rotationPLIMIT = PLIMIT;
-		chip->rotationNLIMIT = NLIMIT;
-		chip->scale = new_scale;
-		possibleATTACKS.push_back(chip);
+		if (chip->approachUP) {
+			enemyCol = chip->boardCol;
+			enemyRow = chip->boardRow - 2;
+			Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+			chip->rotationPLIMIT = PLIMIT;
+			chip->rotationNLIMIT = NLIMIT;
+			chip->scale = new_scale;
+			possibleATTACKS.push_back(chip);
+		}
+		if (chip->approachDOWN) {
+			enemyCol = chip->boardCol;
+			enemyRow = chip->boardRow + 2;
+			Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+			chip->rotationPLIMIT = PLIMIT;
+			chip->rotationNLIMIT = NLIMIT;
+			chip->scale = new_scale;
+			possibleATTACKS.push_back(chip);
+		}
+		if (chip->approachLEFT) {
+			enemyCol = chip->boardCol - 2;
+			enemyRow = chip->boardRow;
+			Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+			chip->rotationPLIMIT = PLIMIT;
+			chip->rotationNLIMIT = NLIMIT;
+			chip->scale = new_scale;
+			possibleATTACKS.push_back(chip);
+		}
+		if (chip->approachRIGHT) {
+			enemyCol = chip->boardCol + 2;
+			enemyRow = chip->boardRow;
+			Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+			chip->rotationPLIMIT = PLIMIT;
+			chip->rotationNLIMIT = NLIMIT;
+			chip->scale = new_scale;
+			possibleATTACKS.push_back(chip);
+		}
+		if (chip->approachULEFT) {
+			enemyCol = chip->boardCol - 2;
+			enemyRow = chip->boardRow - 2;
+			Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+			chip->rotationPLIMIT = PLIMIT;
+			chip->rotationNLIMIT = NLIMIT;
+			chip->scale = new_scale;
+			possibleATTACKS.push_back(chip);
+		}
+		if (chip->approachURIGHT) {
+			enemyCol = chip->boardCol + 2;
+			enemyRow = chip->boardRow - 2;
+			Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+			chip->rotationPLIMIT = PLIMIT;
+			chip->rotationNLIMIT = NLIMIT;
+			chip->scale = new_scale;
+			possibleATTACKS.push_back(chip);
+		}
+		if (chip->approachBLEFT) {
+			enemyCol = chip->boardCol - 2;
+			enemyRow = chip->boardRow + 2;
+			Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+			chip->rotationPLIMIT = PLIMIT;
+			chip->rotationNLIMIT = NLIMIT;
+			chip->scale = new_scale;
+			possibleATTACKS.push_back(chip);
+		}
+		if (chip->approachBRIGHT) {
+			enemyCol = chip->boardCol + 2;
+			enemyRow = chip->boardRow + 2;
+			Chip* chip = new Chip(attackSprite, enemyCol, enemyRow, is3x3board, is7x7board, false);
+			chip->rotationPLIMIT = PLIMIT;
+			chip->rotationNLIMIT = NLIMIT;
+			chip->scale = new_scale;
+			possibleATTACKS.push_back(chip);
+		}
 	}
 }
 
@@ -1166,6 +1340,7 @@ void Fanorona::endTurn(){
 	targetCol = 0;
 	targetRow = 0;
 	possibleATTACKS.clear();
+	possiblePAIKA.clear();
 
 	attacktype = ATK_NULL;
 
@@ -1188,10 +1363,14 @@ void Fanorona::endTurn(){
 		if (numBlack > 0) {
 			gamestate = STATE_BLACKPLAYER;
 			cout << "\n=================== Black Player's Turn ===================" << endl;
+
+			//	Screen Text Display for Black Player's Turn
+			screenText[SCREENTEXT_BLACKTURN]->animate = true;
 		}
 		else { // White has won!
 			gameover = GAMEOVER_WHITEWINS;
 			gamestate = STATE_GAMEOVER;
+			screenText[SCREENTEXT_WHITEWINS]->animate = true;
 		}
 		
 	}
@@ -1211,10 +1390,14 @@ void Fanorona::endTurn(){
 		if (numWhite > 0) {
 			gamestate = STATE_WHITEPLAYER;
 			cout << "\n=================== White Player's Turn ===================" << endl;
+
+			screenText[SCREENTEXT_WHITETURN]->animate = true;
 		}
 		else { // Black has won!
 			gameover = GAMEOVER_BLACKWINS;
 			gamestate = STATE_GAMEOVER;
+
+			screenText[SCREENTEXT_WHITEWINS]->animate = true;
 		}	
 	}
 }
@@ -1745,7 +1928,104 @@ bool Fanorona::paikaCheck() {
 		}
 	}
 
-	// As long as one of the paika moves are possible, then return true (will enable paika)
+
+	//======================================================================================================================
+	//--- Making possiblePAIKA
+	//		Shows available PAIKA moves or at the very least show the chip that was pressed
+	//		3x3 board ONLY will show all the locations that the chip can PAIKA to
+	//======================================================================================================================
+	possiblePAIKA.clear();
+	int paikaCol;
+	int paikaRow;
+
+	SheetSprite chosenSprite = SheetSprite(ui_texture, 90.0f / 512.0f, 482.0f / 512.0f, 27.0f / 512.0f, 28.0f / 512.0f);
+	float PLIMIT = 300.0f;
+	float NLIMIT = 240.0f;
+	float new_scale = 1.5;
+
+	Chip* hand = new Chip(chosenSprite, chipCol, chipRow, is3x3board, is7x7board, false);
+	hand->rotationPLIMIT = PLIMIT;
+	hand->rotationNLIMIT = NLIMIT;
+	hand->scale = new_scale;
+	possiblePAIKA.push_back(hand);
+
+	//	BEGINNING MODE -- AVAILABLE PAIKA MOVES SHOWN WHEN IT'S THE 3X3 BOARD
+	if (is3x3board) {
+		if (paikaUP) {
+			paikaCol = chipCol;
+			paikaRow = chipRow - 1;
+			Chip* hand = new Chip(chosenSprite, paikaCol, paikaRow, is3x3board, is7x7board, false);
+			hand->rotationPLIMIT = PLIMIT;
+			hand->rotationNLIMIT = NLIMIT;
+			hand->scale = new_scale;
+			possiblePAIKA.push_back(hand);
+		}
+		if (paikaDOWN) {
+			paikaCol = chipCol;
+			paikaRow = chipRow + 1;
+			Chip* hand = new Chip(chosenSprite, paikaCol, paikaRow, is3x3board, is7x7board, false);
+			hand->rotationPLIMIT = PLIMIT;
+			hand->rotationNLIMIT = NLIMIT;
+			hand->scale = new_scale;
+			possiblePAIKA.push_back(hand);
+		}
+		if (paikaLEFT) {
+			paikaCol = chipCol - 1;
+			paikaRow = chipRow;
+			Chip* hand = new Chip(chosenSprite, paikaCol, paikaRow, is3x3board, is7x7board, false);
+			hand->rotationPLIMIT = PLIMIT;
+			hand->rotationNLIMIT = NLIMIT;
+			hand->scale = new_scale;
+			possiblePAIKA.push_back(hand);
+		}
+		if (paikaRIGHT) {
+			paikaCol = chipCol + 1;
+			paikaRow = chipRow;
+			Chip* hand = new Chip(chosenSprite, paikaCol, paikaRow, is3x3board, is7x7board, false);
+			hand->rotationPLIMIT = PLIMIT;
+			hand->rotationNLIMIT = NLIMIT;
+			hand->scale = new_scale;
+			possiblePAIKA.push_back(hand);
+		}
+		if (paikaULEFT) {
+			paikaCol = chipCol - 1;
+			paikaRow = chipRow - 1;
+			Chip* hand = new Chip(chosenSprite, paikaCol, paikaRow, is3x3board, is7x7board, false);
+			hand->rotationPLIMIT = PLIMIT;
+			hand->rotationNLIMIT = NLIMIT;
+			hand->scale = new_scale;
+			possiblePAIKA.push_back(hand);
+		}
+		if (paikaURIGHT) {
+			paikaCol = chipCol + 1;
+			paikaRow = chipRow - 1;
+			Chip* hand = new Chip(chosenSprite, paikaCol, paikaRow, is3x3board, is7x7board, false);
+			hand->rotationPLIMIT = PLIMIT;
+			hand->rotationNLIMIT = NLIMIT;
+			hand->scale = new_scale;
+			possiblePAIKA.push_back(hand);
+		}
+		if (paikaBLEFT) {
+			paikaCol = chipCol - 1;
+			paikaRow = chipRow + 1;
+			Chip* hand = new Chip(chosenSprite, paikaCol, paikaRow, is3x3board, is7x7board, false);
+			hand->rotationPLIMIT = PLIMIT;
+			hand->rotationNLIMIT = NLIMIT;
+			hand->scale = new_scale;
+			possiblePAIKA.push_back(hand);
+		}
+		if (paikaBRIGHT) {
+			paikaCol = chipCol + 1;
+			paikaRow = chipRow + 1;
+			Chip* hand = new Chip(chosenSprite, paikaCol, paikaRow, is3x3board, is7x7board, false);
+			hand->rotationPLIMIT = PLIMIT;
+			hand->rotationNLIMIT = NLIMIT;
+			hand->scale = new_scale;
+			possiblePAIKA.push_back(hand);
+		}
+	}
+
+	//	As long as one of the paika moves are possible, then return true (will enable paika)
 	if (paikaUP || paikaDOWN || paikaLEFT || paikaRIGHT || paikaULEFT || paikaURIGHT || paikaBLEFT || paikaBRIGHT){
 		return true;
 	}

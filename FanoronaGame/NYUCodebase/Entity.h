@@ -1,16 +1,13 @@
 #pragma once
 #include "SheetSprite.h"
 #include <vector>
-#define FIXED_TIMESTEP 0.0333333f // 30 FPS
 
-/*	The Entity class will be used for all the objects 
-*/
 class Entity {
 public:
 	Entity();
 	Entity(SheetSprite sprite, float x, float y, float scale);
 
-	SheetSprite sprite;			// Default sprite for this entity
+	SheetSprite sprite;							// Default sprite for this entity
 
 	//	Functions
 	void Update(float elapsed);
@@ -35,12 +32,12 @@ public:
 	int frameIndex = 0;							//	Starting frame index is 0
 	std::vector<SheetSprite> animationFrames;	//	Vector of animation frames						(MUST BE GIVEN)
 
-	//	Variables affecting Collision
-	bool isStatic = false;				// Should forces affect this entity? We shall assume false (for most entities) and set to true when needed 
+	//	Variables affecting Collision (NOT USED IN THIS PROJECT)
+	bool isStatic = false;						// Should forces affect this entity? We shall assume false (for most entities) and set to true when needed 
 
-	//	Collsion Detection
-	bool collidedTop;					// A collision has been detected with the top of this entity
-	bool collidedBot;					// Collision with bottom
-	bool collidedRight;					// Collision with right 
-	bool collidedLeft;					// Collision with left
+	//	Collsion Detection (NOT USED IN THIS PROJECT)
+	bool collidedTop;							// A collision has been detected with the top of this entity
+	bool collidedBot;							// Collision with bottom
+	bool collidedRight;							// Collision with right 
+	bool collidedLeft;							// Collision with left
 };

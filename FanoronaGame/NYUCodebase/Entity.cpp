@@ -61,14 +61,12 @@ bool Entity::collidesWith(Entity *entity) {
 	return true;
 }
 
-/*	This function returns the x value of the Entity.
-*/
+/*
 float Entity::get_x() {
 	return x;
 }
 
-/*	This function returns the y value of the Entity.
-*/
 float Entity::get_y() {
 	return y;
 }
+*/
