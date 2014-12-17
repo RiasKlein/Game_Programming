@@ -407,6 +407,12 @@ void Fanorona::Render() {
 	} // above is Render() : gamestate == STATE_WHITEPLAYER || gamestate == STATE_BLACKPLAYER
 	
 	else if (gamestate == STATE_GAMEOVER) {
+		//==================================================================================================================
+		//--- Render Game Over Screen
+		//		- Moving Text to display who the winner is
+		//		- Flag animations for the winning team
+		//==================================================================================================================
+
 		//	Render the board and chips
 		board->Render();
 		for (unsigned int i = 0; i < currentchips.size(); i++){
@@ -448,6 +454,10 @@ void Fanorona::Render() {
 	} // above is Render() : gamestate == STATE_GAMEOVER 
 
 	else if (gamestate == STATE_GAMERULES1) {
+		//==================================================================================================================
+		//--- Render Game Rules
+		//==================================================================================================================
+
 		//	Render the right button (for changing to STATE_GAMERULES2)
 		mainmenu[0]->Render();
 		mainmenu[9]->Render();
@@ -552,7 +562,6 @@ void Fanorona::Render() {
 }
 
 /*	Update function
-	
 */
 void Fanorona::Update(float elapsed) {
 	//======================================================================================================================
@@ -638,8 +647,6 @@ bool Fanorona::UpdateAndRender() {
 				if (LOG_MENUS && LOG_MASTER) {
 					cout << "LOG Menu:\tON" << endl;
 				}
-//=================================================================
-
 			}
 		}
 		//	Check whether there has been mouse movement -- if there was movement then update the position variables
@@ -1097,7 +1104,6 @@ bool Fanorona::UpdateAndRender() {
 					gamestate = STATE_GAMERULES2;
 				}
 			}
-//==================================================================
 			else if (gamestate == STATE_GAMERULES2) {
 				// There are two buttons on this screen : Left / Right
 
@@ -1115,10 +1121,6 @@ bool Fanorona::UpdateAndRender() {
 			}
 
 		} // above is event.type == SDL_MOUSEBUTTONDOWN
-
-		else if (event.type == SDL_MOUSEBUTTONUP) { // This is just used for button animation purposes on buttons 
-			
-		}
 	}
 
 	// Keyboard Input (UP / DOWN / LEFT / RIGHT controls the music)

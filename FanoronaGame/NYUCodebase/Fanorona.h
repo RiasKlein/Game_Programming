@@ -113,8 +113,9 @@ private:
 
 	//	Game states
 	enum GameState { STATE_MAINMENU, STATE_WHITEPLAYER, STATE_BLACKPLAYER, STATE_GAMEOVER, STATE_GAMERULES1, STATE_GAMERULES2 };
-	int gamestate = STATE_MAINMENU;			// The initial game state is the main menu
+	int gamestate = STATE_MAINMENU;			//	The initial game state is the main menu
 
+	//	Game Menu
 	enum GameMenu { MENU_OFF, MENU_ON };
 	int gamemenu = MENU_OFF;
 
@@ -128,17 +129,17 @@ private:
 	vector<MovingText*> screenText;
 
 	//	Tracking Mouse Motion
-	float mouseX = 0.0f;					// X position of most recent mouse click (from -2 ~ 2)
-	float mouseY = 0.0f;					// Y position of most recent mouse click (from -2 ~ 2)
+	float mouseX = 0.0f;					//	X position of most recent mouse click (from -2 ~ 2)
+	float mouseY = 0.0f;					//	Y position of most recent mouse click (from -2 ~ 2)
 
 	int turnCounter = 0;
 
 	//	LOGGER Messages (Used for debugging)
-	bool LOG_MASTER = false;				// Enables the debug log entries -- if this is false, no log entries will print
-	bool LOG_TRACEMOUSEDOWN = true;			// Console log: entry for mouse click information
-	bool LOG_MUSIC = true;					// Console log: entry for changes to music settings
-	bool LOG_CHIPSSIZE = true;				// Console log: entry for the size of the currentchips vector
-	bool LOG_CLICKEDCHIP = true;			// Console log: entry for the chip for that was clicked
-	bool LOG_POPULATECHIPMOVES = true;		// Console log: entry for the results of populateChipMoves
-	bool LOG_MENUS = true;					// Console log: entry for the menu status
+	bool LOG_MASTER = false;				//	Enables the debug log entries -- if this is false, no log entries will print
+	bool LOG_TRACEMOUSEDOWN = true;			//	Console log: entry for mouse click information
+	bool LOG_MUSIC = true;					//	Console log: entry for changes to music settings
+	bool LOG_CHIPSSIZE = true;				//	Console log: entry for the size of the currentchips vector
+	bool LOG_CLICKEDCHIP = true;			//	Console log: entry for the chip for that was clicked
+	bool LOG_POPULATECHIPMOVES = true;		//	Console log: entry for the results of populateChipMoves
+	bool LOG_MENUS = true;					//	Console log: entry for the menu status
 };
