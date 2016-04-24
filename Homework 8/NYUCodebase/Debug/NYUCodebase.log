@@ -1,0 +1,28 @@
+﻿Build started 11/11/2014 8:18:41 AM.
+     1>Project "S:\Documents EX\New York University\Fall 2014\CS-UY 3113 Intro to Game Programming\GitHub ShunTse\ShunmanTse-CS3113-HW8\Homework 8\NYUCodebase\NYUCodebase.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\SDL2\include /IC:\SDL2_image\include /IC:\SDL2_mixer\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ParticleEmitter.cpp main.cpp
+         main.cpp
+         ParticleEmitter.cpp
+     1>s:\documents ex\new york university\fall 2014\cs-uy 3113 intro to game programming\github shuntse\shunmantse-cs3113-hw8\homework 8\nyucodebase\particleemitter.cpp(10): warning C4018: '<' : signed/unsigned mismatch
+     1>s:\documents ex\new york university\fall 2014\cs-uy 3113 intro to game programming\github shuntse\shunmantse-cs3113-hw8\homework 8\nyucodebase\particleemitter.cpp(22): warning C4018: '<' : signed/unsigned mismatch
+     1>s:\documents ex\new york university\fall 2014\cs-uy 3113 intro to game programming\github shuntse\shunmantse-cs3113-hw8\homework 8\nyucodebase\particleemitter.cpp(37): warning C4018: '<' : signed/unsigned mismatch
+     1>s:\documents ex\new york university\fall 2014\cs-uy 3113 intro to game programming\github shuntse\shunmantse-cs3113-hw8\homework 8\nyucodebase\particleemitter.cpp(66): warning C4018: '<' : signed/unsigned mismatch
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"S:\Documents EX\New York University\Fall 2014\CS-UY 3113 Intro to Game Programming\GitHub ShunTse\ShunmanTse-CS3113-HW8\Homework 8\Debug\NYUCodebase.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\SDL2\lib\x86 /LIBPATH:C:\SDL2_image\lib\x86 /LIBPATH:C:\SDL2_mixer\lib\x86 SDL2.lib SDL2main.lib SDL2_image.lib SDL2_mixer.lib OpenGL32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"S:\Documents EX\New York University\Fall 2014\CS-UY 3113 Intro to Game Programming\GitHub ShunTse\ShunmanTse-CS3113-HW8\Homework 8\Debug\NYUCodebase.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"S:\Documents EX\New York University\Fall 2014\CS-UY 3113 Intro to Game Programming\GitHub ShunTse\ShunmanTse-CS3113-HW8\Homework 8\Debug\NYUCodebase.lib" /MACHINE:X86 Debug\AsteroidsApp.obj
+         Debug\Bullet.obj
+         Debug\Entity.obj
+         Debug\main.obj
+         Debug\Matrix.obj
+         Debug\Particle.obj
+         Debug\ParticleEmitter.obj
+         Debug\Player.obj
+         Debug\SheetSprite.obj
+         Debug\Vector.obj
+         NYUCodebase.vcxproj -> S:\Documents EX\New York University\Fall 2014\CS-UY 3113 Intro to Game Programming\GitHub ShunTse\ShunmanTse-CS3113-HW8\Homework 8\Debug\NYUCodebase.exe
+     1>Done Building Project "S:\Documents EX\New York University\Fall 2014\CS-UY 3113 Intro to Game Programming\GitHub ShunTse\ShunmanTse-CS3113-HW8\Homework 8\NYUCodebase\NYUCodebase.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.99
