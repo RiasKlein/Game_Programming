@@ -1,0 +1,8 @@
+<TextureAtlas imagePath="sprites.png">
+	<SubTexture name="BlackTurn.png" u="0" v="80" width="717" height="79"/>
+	<SubTexture name="BlackWins.png" u="445" v="761" width="433" height="68"/>
+	<SubTexture name="ESCmenu.png" u="0" v="160" width="619" height="600"/>
+	<SubTexture name="ESCmenuLogo.png" u="620" v="160" width="261" height="150"/>
+	<SubTexture name="WhiteTurn.png" u="0" v="0" width="728" height="79"/>
+	<SubTexture name="WhiteWins.png" u="0" v="761" width="444" height="68"/>
+</TextureAtlas>

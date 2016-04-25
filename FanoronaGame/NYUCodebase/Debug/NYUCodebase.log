@@ -1,0 +1,20 @@
+﻿Build started 12/14/2014 8:55:29 PM.
+     1>Project "S:\Documents EX\New York University\Fall 2014\CS-UY 3113 Intro to Game Programming\GitHub ShunTse\ShunmanTse-CS3113-FinalProject_v2\FanoronaGame\NYUCodebase\NYUCodebase.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\SDL2\include /IC:\SDL2_image\include /IC:\SDL2_mixer\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Fanorona.cpp
+         Fanorona.cpp
+     1>s:\documents ex\new york university\fall 2014\cs-uy 3113 intro to game programming\github shuntse\shunmantse-cs3113-finalproject_v2\fanoronagame\nyucodebase\fanorona.cpp(404): warning C4018: '<' : signed/unsigned mismatch
+     1>s:\documents ex\new york university\fall 2014\cs-uy 3113 intro to game programming\github shuntse\shunmantse-cs3113-finalproject_v2\fanoronagame\nyucodebase\fanorona.cpp(460): warning C4305: 'argument' : truncation from 'double' to 'float'
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"S:\Documents EX\New York University\Fall 2014\CS-UY 3113 Intro to Game Programming\GitHub ShunTse\ShunmanTse-CS3113-FinalProject_v2\FanoronaGame\Debug\NYUCodebase.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\SDL2\lib\x86 /LIBPATH:C:\SDL2_image\lib\x86 /LIBPATH:C:\SDL2_mixer\lib\x86 SDL2.lib SDL2main.lib SDL2_image.lib SDL2_mixer.lib OpenGL32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"S:\Documents EX\New York University\Fall 2014\CS-UY 3113 Intro to Game Programming\GitHub ShunTse\ShunmanTse-CS3113-FinalProject_v2\FanoronaGame\Debug\NYUCodebase.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"S:\Documents EX\New York University\Fall 2014\CS-UY 3113 Intro to Game Programming\GitHub ShunTse\ShunmanTse-CS3113-FinalProject_v2\FanoronaGame\Debug\NYUCodebase.lib" /MACHINE:X86 Debug\Chip.obj
+         Debug\Entity.obj
+         Debug\main.obj
+         Debug\Fanorona.obj
+         Debug\Node.obj
+         Debug\SheetSprite.obj
+         NYUCodebase.vcxproj -> S:\Documents EX\New York University\Fall 2014\CS-UY 3113 Intro to Game Programming\GitHub ShunTse\ShunmanTse-CS3113-FinalProject_v2\FanoronaGame\Debug\NYUCodebase.exe
+     1>Done Building Project "S:\Documents EX\New York University\Fall 2014\CS-UY 3113 Intro to Game Programming\GitHub ShunTse\ShunmanTse-CS3113-FinalProject_v2\FanoronaGame\NYUCodebase\NYUCodebase.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.93
