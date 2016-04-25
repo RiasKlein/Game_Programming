@@ -10,4 +10,6 @@ Games created using C++ and SDL in NYU SoE's Game Programming course.
 * 6. Platformer with Music 
 * 7. Asteroids
 * 8. Asteroids V2
-* Final Project: Fanorona
+
+### Final Project
+Fanorona
