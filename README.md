@@ -13,3 +13,11 @@ Games created using C++ and SDL in NYU SoE's Game Programming course.
 
 ### Final Project
 Fanorona
+
+## Contact Information 
+* Name: Shunman (Shun) Tse
+* Primary Email: 
+  - tseshunman@gmail.com
+* Other Emails: 
+  - shunman.tse@nyu.edu
+  - st1637@nyu.edu
